@@ -1,8 +1,10 @@
 import { Mail, Linkedin } from "lucide-react";
+import ParticleNetwork from "./ParticleNetwork";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center section-glow">
+    <section className="relative min-h-screen flex items-center overflow-hidden">
+      <ParticleNetwork />
       <div className="container mx-auto px-6 md:px-12 lg:px-24 relative z-10">
         <div className="max-w-3xl">
           <p className="text-muted-foreground text-sm tracking-[0.3em] uppercase mb-6 font-body">
@@ -41,7 +43,6 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-      {/* Vertical line accent */}
       <div className="absolute right-12 top-1/4 bottom-1/4 w-px bg-border hidden lg:block" />
     </section>
   );

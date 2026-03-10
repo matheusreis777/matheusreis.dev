@@ -4,7 +4,6 @@ const AboutSection = () => {
       <div className="container mx-auto px-6 md:px-12 lg:px-24 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           <div className="lg:col-span-4">
-            <p className="text-muted-foreground text-sm tracking-[0.3em] uppercase mb-4 font-body">01</p>
             <h2 className="font-heading text-3xl md:text-4xl font-medium text-foreground">
               Sobre<br />Mim
             </h2>
