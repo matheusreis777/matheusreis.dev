@@ -16,10 +16,13 @@ const AboutSection = () => {
               Possuo aproximadamente 4 anos de experiência no desenvolvimento de aplicações utilizando .NET e Angular, e cerca de 8 anos trabalhando com banco de dados e modelagem de dados.
             </p>
             <p className="text-muted-foreground text-base leading-relaxed font-body">
-              Sou apaixonado por resolver problemas complexos através da tecnologia e construir soluções robustas que gerem valor real para empresas e usuários.
+              Minha principal força está no backend com C# e .NET, uma stack muito utilizada em sistemas corporativos. Tenho capacidade de desenvolver APIs REST escaláveis, implementar regras de negócio complexas e criar serviços robustos para aplicações web e mobile.
             </p>
             <p className="text-muted-foreground text-base leading-relaxed font-body">
-              Minha formação é em Análise e Desenvolvimento de Sistemas. Tenho grande experiência no desenvolvimento de APIs REST, integrações entre sistemas, automação de processos e consumo de serviços via HTTP.
+              Sou apaixonado por resolver problemas reais através da tecnologia e construir soluções que gerem valor para empresas e usuários. Minha formação é em Análise e Desenvolvimento de Sistemas.
+            </p>
+            <p className="text-muted-foreground text-base leading-relaxed font-body">
+              Meu perfil fullstack me permite trabalhar em todo o fluxo da aplicação — do banco de dados à interface — algo que empresas valorizam muito por permitir entender o sistema completo.
             </p>
             <div className="pt-6 flex gap-12 border-t border-border">
               <div>

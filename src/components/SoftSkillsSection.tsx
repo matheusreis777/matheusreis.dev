@@ -1,34 +1,39 @@
-import { Brain, MessageSquare, Network, BookOpen, Users, Gauge } from "lucide-react";
+import { Brain, MessageSquare, Network, BookOpen, Users, Gauge, Search } from "lucide-react";
 
 const softSkills = [
   {
     title: "Resolução de Problemas",
-    description: "Capacidade analítica para identificar gargalos técnicos e propor soluções eficientes.",
+    description: "Mentalidade focada em resolver problemas reais usando tecnologia. Capacidade analítica para investigar bugs complexos, entender fluxos de dados e estruturar soluções eficientes.",
     icon: Brain,
   },
   {
     title: "Comunicação Técnica",
-    description: "Facilidade para traduzir problemas técnicos complexos em soluções claras para equipes e stakeholders.",
+    description: "Facilidade para traduzir problemas técnicos complexos em soluções claras para equipes e stakeholders, facilitando a tomada de decisão.",
     icon: MessageSquare,
   },
   {
     title: "Pensamento Sistêmico",
-    description: "Visão ampla de arquitetura de sistemas, garantindo escalabilidade e manutenção a longo prazo.",
+    description: "Visão ampla de arquitetura de sistemas, garantindo escalabilidade e manutenção a longo prazo. Entendimento completo do fluxo da aplicação, do banco de dados à interface.",
     icon: Network,
   },
   {
-    title: "Aprendizado Contínuo",
-    description: "Comprometimento constante com evolução profissional e atualização tecnológica.",
+    title: "Capacidade Analítica",
+    description: "Desenvolvida naturalmente através de anos trabalhando com backend, APIs e banco de dados. Habilidade para investigar problemas complexos e estruturar soluções eficientes.",
+    icon: Search,
+  },
+  {
+    title: "Adaptabilidade Tecnológica",
+    description: "Experiência com tecnologias diversas — .NET, Angular, FlutterFlow, SQL, Frontend Web — demonstrando grande capacidade de adaptação às necessidades do projeto.",
     icon: BookOpen,
   },
   {
     title: "Colaboração em Equipe",
-    description: "Experiência trabalhando em times ágeis e colaborando com desenvolvedores, designers e gestores de produto.",
+    description: "Experiência trabalhando em times ágeis e colaborando com desenvolvedores, designers e gestores de produto em ambientes corporativos.",
     icon: Users,
   },
   {
     title: "Foco em Performance",
-    description: "Preocupação constante com otimização de sistemas, performance de APIs e eficiência de banco de dados.",
+    description: "Preocupação constante com otimização de sistemas, performance de APIs, eficiência de banco de dados e otimização de queries.",
     icon: Gauge,
   },
 ];
