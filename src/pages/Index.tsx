@@ -7,6 +7,7 @@ const AboutSection = lazy(() => import("@/components/AboutSection"));
 const HardSkillsSection = lazy(() => import("@/components/HardSkillsSection"));
 const SoftSkillsSection = lazy(() => import("@/components/SoftSkillsSection"));
 const ExperienceSection = lazy(() => import("@/components/ExperienceSection"));
+const ProjectsSection = lazy(() => import("@/components/ProjectsSection"));
 const ContactSection = lazy(() => import("@/components/ContactSection"));
 
 const Index = () => {
@@ -20,6 +21,7 @@ const Index = () => {
           <HardSkillsSection />
           <SoftSkillsSection />
           <ExperienceSection />
+          <ProjectsSection />
           <ContactSection />
         </Suspense>
       </main>
