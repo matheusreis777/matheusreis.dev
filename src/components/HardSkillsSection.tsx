@@ -1,25 +1,30 @@
-import { Code2, Layout, Database, Globe } from "lucide-react";
+import { Code2, Layout, Database, Globe, Smartphone } from "lucide-react";
 
 const skillGroups = [
   {
     title: "Backend",
     icon: Code2,
-    skills: ["C#", ".NET", "ASP.NET Core", "Web API", "Integrações REST", "Arquitetura de APIs"],
+    skills: ["C#", ".NET", "ASP.NET Core", "Web API", "APIs REST escaláveis", "Regras de negócio complexas", "Arquitetura corporativa"],
   },
   {
     title: "Frontend",
     icon: Layout,
-    skills: ["Angular", "AngularJS", "JavaScript", "React Native"],
+    skills: ["Angular", "AngularJS", "JavaScript", "HTML", "CSS"],
+  },
+  {
+    title: "Mobile",
+    icon: Smartphone,
+    skills: ["React Native", "FlutterFlow", "Aplicações mobile multiplataforma"],
   },
   {
     title: "Banco de Dados",
     icon: Database,
-    skills: ["SQL Server", "PostgreSQL", "Supabase", "Modelagem de dados", "Otimização de queries"],
+    skills: ["SQL Server", "PostgreSQL", "Supabase", "Modelagem de dados", "Queries complexas", "Otimização de performance", "Relacionamento entre tabelas"],
   },
   {
     title: "Integrações",
     icon: Globe,
-    skills: ["APIs externas", "Requisições HTTP", "Integração entre sistemas", "Automação de fluxos"],
+    skills: ["APIs externas", "Comunicação entre serviços", "Autenticação e tokens", "Automação de fluxos de dados", "Requisições HTTP"],
   },
 ];
 
