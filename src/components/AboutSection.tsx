@@ -135,12 +135,11 @@ const AboutSection = () => {
                     >
                       <a 
                         href="/MATHEUS REIS MENDONÇA - CURRICULO.pdf" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
+                        download
                         className="flex items-center gap-2"
                       >
-                        <FileText size={16} />
-                        Acessar Currículo
+                        <Download size={16} />
+                        Baixar Currículo
                       </a>
                     </Button>
                   </div>
@@ -164,12 +163,11 @@ const AboutSection = () => {
                     >
                       <a 
                         href="/DiplomaDigital-ADS-MatheusReisMendonca.pdf" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
+                        download
                         className="flex items-center gap-2"
                       >
-                        <GraduationCap size={16} />
-                        Acessar Diploma
+                        <Download size={16} />
+                        Baixar Diploma
                       </a>
                     </Button>
                   </div>
