@@ -1,4 +1,6 @@
-import { User, Briefcase, Database, GraduationCap } from "lucide-react";
+import { User, Briefcase, Database, GraduationCap, FileText, Download, Maximize2 } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const AboutSection = () => {
   return (
@@ -12,11 +14,41 @@ const AboutSection = () => {
           <div className="h-1 w-20 bg-primary mt-4 rounded-full"></div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
-          {/* Sidebar / Highlights Card */}
-          <div className="lg:col-span-4 space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
-            <div className="bg-card/30 border border-border/50 rounded-2xl p-6 md:p-8 backdrop-blur-sm shadow-sm transition-all hover:bg-card/50">
-              <h3 className="font-heading text-xl font-medium text-foreground mb-6">Destaques Profissionais</h3>
+        {/* Top Grid: Profile + Highlights side-by-side with Bio */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          {/* Sidebar Area (Left) */}
+          <div className="lg:col-span-4 flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
+            {/* Perfil Compacto */}
+            <div className="bg-card/20 border border-border/40 rounded-3xl p-6 backdrop-blur-sm shadow-sm flex flex-col items-center text-center">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div className="cursor-zoom-in relative w-24 h-24 rounded-full overflow-hidden border-2 border-primary/20 hover:border-primary/50 transition-colors mb-4 group">
+                    <img 
+                      src="/profile-me.jpg" 
+                      alt="Matheus Reis Mendonça" 
+                      className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                      <Maximize2 size={16} />
+                    </div>
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="max-w-3xl border-none bg-transparent p-0 shadow-none sm:rounded-none">
+                  <img 
+                    src="/profile-me.jpg" 
+                    alt="Matheus Reis Mendonça (Ampliada)" 
+                    className="w-full h-auto rounded-lg shadow-2xl"
+                  />
+                </DialogContent>
+              </Dialog>
+              
+              <h3 className="font-heading text-lg font-semibold text-foreground">Matheus Reis Mendonça</h3>
+              <p className="text-primary text-xs font-medium tracking-[0.1em] uppercase mt-1">Desenvolvedor Pleno</p>
+            </div>
+
+            {/* Destaques (flex-1 para esticar e alinhar com a bio) */}
+            <div className="bg-card/20 border border-border/40 rounded-3xl p-8 backdrop-blur-sm shadow-sm transition-all hover:bg-card/30 flex-1">
+              <h3 className="font-heading text-xl font-medium text-foreground mb-6">Destaques</h3>
               
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
@@ -44,23 +76,23 @@ const AboutSection = () => {
                     <GraduationCap className="text-primary" size={20} />
                   </div>
                   <div>
-                    <p className="font-heading text-lg font-semibold text-foreground line-clamp-1">Graduado</p>
-                    <p className="text-muted-foreground text-sm font-body mt-1">Análise e Desenvolvimento de Sistemas</p>
+                    <p className="font-heading text-lg font-semibold text-foreground">Ads</p>
+                    <p className="text-muted-foreground text-sm font-body mt-1">Graduado</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Main Bio Content */}
-          <div className="lg:col-span-8 space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-            <div className="bg-card/10 border border-border/30 rounded-2xl p-6 md:p-8 lg:p-10">
-              <div className="prose prose-invert max-w-none">
+          {/* Bio Content Area (Right) */}
+          <div className="lg:col-span-8 flex flex-col animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+            <div className="bg-card/20 border border-border/40 rounded-3xl p-8 lg:p-10 h-full backdrop-blur-sm transition-all hover:bg-card/30">
+              <div className="prose prose-invert max-w-none text-justify">
                 <p className="text-foreground text-lg leading-relaxed font-body mb-6">
                   Olá, sou o <span className="font-semibold text-primary">Matheus Reis Mendonça</span>, um Desenvolvedor Fullstack Pleno focado em criar sistemas robustos, escaláveis e eficientes, atuando desde a modelagem de dados até a interface do usuário.
                 </p>
                 
-                <h4 className="text-foreground font-heading font-medium text-xl mt-8 mb-4 border-b border-border/50 pb-2">Minha Trajetória</h4>
+                <h4 className="text-foreground font-heading font-medium text-xl mt-8 mb-4 border-b border-border/50 pb-2 text-left">Minha Trajetória</h4>
                 <p className="text-muted-foreground text-base leading-relaxed font-body mb-4">
                   Com uma forte bagagem de quase uma década trabalhando com bancos de dados e mais de 4 anos dedicados ao desenvolvimento de software, adquiri uma visão profunda e sistêmica sobre como aplicações de sucesso são arquitetadas nos bastidores.
                 </p>
@@ -68,10 +100,76 @@ const AboutSection = () => {
                   Minha principal expertise reside no backend utilizando <strong className="text-foreground font-medium">C# e a plataforma .NET</strong>, a qual emprego no desenvolvimento de APIs REST escaláveis para sistemas corporativos, garantindo a performance da lógica de negócios mais complexa.
                 </p>
 
-                <h4 className="text-foreground font-heading font-medium text-xl mt-8 mb-4 border-b border-border/50 pb-2">Como eu trabalho</h4>
+                <h4 className="text-foreground font-heading font-medium text-xl mt-8 mb-4 border-b border-border/50 pb-2 text-left">Como eu trabalho</h4>
                 <p className="text-muted-foreground text-base leading-relaxed font-body mb-4">
                   Acredito que o verdadeiro valor da tecnologia está em resolver problemas de negócios de maneira elegante. Meu perfil Fullstack me permite navegar sem atritos por toda a esteira de desenvolvimento do ciclo de vida da aplicação — ajudando as empresas a reduzirem ruídos de comunicação entre as barreiras de frontend e backend.
                 </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Section: Documents (Full Width) */}
+        <div className="mt-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
+          <div className="bg-card/20 border border-border/40 rounded-3xl p-8 backdrop-blur-sm shadow-sm transition-all hover:bg-card/30">
+            <h3 className="font-heading text-xl font-medium text-foreground mb-8 flex items-center gap-3">
+              <FileText className="text-primary" size={24} />
+              Certificações e Documentos
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Currículo */}
+              <div className="flex flex-col sm:flex-row items-center gap-6 p-6 rounded-2xl border border-border/30 bg-background/40 hover:border-primary/30 transition-all group">
+                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                  <FileText className="text-primary" size={32} />
+                </div>
+                <div className="flex-1 text-center sm:text-left">
+                  <p className="font-heading text-lg font-semibold text-foreground">Currículo Profissional</p>
+                  <p className="text-muted-foreground text-sm font-body mt-1 mb-4">Minha trajetória detalhada e qualificações.</p>
+                  <div className="flex flex-wrap justify-center sm:justify-start gap-3">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="bg-background/50 border-border/50 hover:border-primary/50"
+                      onClick={() => window.open('/MATHEUS REIS MENDONÇA - CURRICULO.pdf', '_blank')}
+                    >
+                      Visualizar
+                    </Button>
+                    <Button variant="secondary" size="sm" asChild>
+                      <a href="/MATHEUS REIS MENDONÇA - CURRICULO.pdf" download className="flex items-center gap-2">
+                        <Download size={16} />
+                        Baixar
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Diploma */}
+              <div className="flex flex-col sm:flex-row items-center gap-6 p-6 rounded-2xl border border-border/30 bg-background/40 hover:border-primary/30 transition-all group">
+                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                  <GraduationCap className="text-primary" size={32} />
+                </div>
+                <div className="flex-1 text-center sm:text-left">
+                  <p className="font-heading text-lg font-semibold text-foreground">Diploma ADS</p>
+                  <p className="text-muted-foreground text-sm font-body mt-1 mb-4">Análise e Desenvolvimento de Sistemas.</p>
+                  <div className="flex flex-wrap justify-center sm:justify-start gap-3">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="bg-background/50 border-border/50 hover:border-primary/50"
+                      onClick={() => window.open('/DiplomaDigital-ADS-MatheusReisMendonca.pdf', '_blank')}
+                    >
+                      Visualizar
+                    </Button>
+                    <Button variant="secondary" size="sm" asChild>
+                      <a href="/DiplomaDigital-ADS-MatheusReisMendonca.pdf" download className="flex items-center gap-2">
+                        <Download size={16} />
+                        Baixar
+                      </a>
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
