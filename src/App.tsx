@@ -7,7 +7,6 @@ import "@/i18n/config";
 import { Analytics } from "@vercel/analytics/react";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
-import BibliaPage from "./pages/BibliaPage.tsx";
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
 
 const queryClient = new QueryClient();
@@ -21,9 +20,6 @@ const App = () => (
         <FloatingWhatsApp />
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/biblia" element={<BibliaPage />} />
-          <Route path="/biblia/:bookId" element={<BibliaPage />} />
-          <Route path="/biblia/:bookId/:chapter" element={<BibliaPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
