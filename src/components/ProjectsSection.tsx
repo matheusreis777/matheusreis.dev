@@ -40,7 +40,7 @@ const ProjectsSection = () => {
       title: "Bíblia Online",
       description: t("projects.items.bible.desc"),
       tech: ["React", "TypeScript", "Vite", "bible-api.com"],
-      link: "https://github.com/matheusreis777/biblia",
+      link: "https://biblia.matheusreis.dev/",
       icon: BookOpen,
     },
   ];
