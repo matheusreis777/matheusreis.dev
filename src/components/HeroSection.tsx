@@ -72,10 +72,35 @@ const HeroSection = () => {
     }
   };
 
+  const formatVerse = (text: string): string => {
+    // 1. Primeira letra sempre maiúscula
+    let result = text.trim();
+    result = result.charAt(0).toUpperCase() + result.slice(1);
+
+    // 2. SENHOR em maiúsculas (versões: senhor, Senhor, SENHOR)
+    result = result.replace(/\bsenhor\b/gi, "SENHOR");
+
+    // 3. Pronomes divinos com inicial maiúscula
+    const divinePronouns = [
+      "ele", "eu", "tu", "teu", "tua", "teus", "tuas",
+      "dele", "nele", "lhe"
+    ];
+    for (const word of divinePronouns) {
+      const regex = new RegExp(`\\b${word}\\b`, "gi");
+      result = result.replace(regex, (match) =>
+        match.charAt(0).toUpperCase() + match.slice(1).toLowerCase()
+      );
+    }
+
+    return result;
+  };
+
   useEffect(() => {
     const fetchVerse = async () => {
       try {
         const today = new Date().toISOString().split("T")[0];
+
+        // Cache local: evita chamada redundante no mesmo browser no mesmo dia
         const storedData = localStorage.getItem("dailyVerse");
         if (storedData) {
           const parsedData = JSON.parse(storedData);
@@ -85,10 +110,11 @@ const HeroSection = () => {
           }
         }
 
-        const response = await fetch("https://bible-api.com/?random=verse&translation=almeida");
+        // Chama a Vercel Serverless Function — mesma resposta para todos os devices
+        const response = await fetch("/api/daily-verse");
         if (response.ok) {
           const data = await response.json();
-          const verse = { text: data.text.trim(), reference: data.reference };
+          const verse = { text: data.text, reference: data.reference };
           setDailyVerse(verse);
           localStorage.setItem("dailyVerse", JSON.stringify({ date: today, verse }));
         }
