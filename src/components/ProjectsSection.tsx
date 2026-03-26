@@ -1,58 +1,61 @@
 import { ExternalLink, Code2, Globe, Smartphone, LayoutGrid, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
-
-const projects = [
-  {
-    title: "V4 System - Site",
-    description: "Site moderno e performático, focado em experiência do usuário e conversão.",
-    tech: ["React", "JavaScript", "Tailwind CSS", "Next.js"],
-    link: "https://v4system.com.br/",
-    icon: Globe,
-  },
-  {
-    title: "V4 System - CRM",
-    description: "Sistema de gestão de relacionamento com o cliente robusto, com integração completa de dados e regras de negócio complexas.",
-    tech: [".NET", "AngularJS", "C#", "SQL Server"],
-    link: "https://crm.v4system.com.br/",
-    icon: Code2,
-  },
-  {
-    title: "V4 System - CRM Mobile",
-    description: "Aplicativo mobile corporativo integrado ao CRM, facilitando o acesso a dados e gestão de clientes em tempo real.",
-    tech: ["React Native", "TypeScript", "Expo", "API .NET"],
-    link: "#",
-    status: "Em aprovação na Play Store",
-    icon: Smartphone,
-  },
-  {
-    title: "Under Control",
-    description: "Uma vitrine de soluções digitais de alta performance projetadas para otimizar processos e maximizar resultados.",
-    tech: ["Next.js", ".NET", "TypeScript", "Tailwind CSS"],
-    link: "https://www.undercontrol.online",
-    status: "Em desenvolvimento",
-    icon: LayoutGrid,
-  },
-  {
-    title: "Bíblia Online",
-    description: "Leitura completa da Bíblia em português (Almeida), com todos os 66 livros, navegação por capítulos, busca de livros e versículo diário integrado ao site.",
-    tech: ["React", "TypeScript", "Vite", "bible-api.com"],
-    path: "/biblia",
-    icon: BookOpen,
-  },
-];
+import { useTranslation } from "react-i18next";
 
 const ProjectsSection = () => {
+  const { t } = useTranslation();
+
+  const projects = [
+    {
+      title: "V4 System - Site",
+      description: t("projects.items.v4_site.desc"),
+      tech: ["React", "JavaScript", "Tailwind CSS", "Next.js"],
+      link: "https://v4system.com.br/",
+      icon: Globe,
+    },
+    {
+      title: "V4 System - CRM",
+      description: t("projects.items.v4_crm.desc"),
+      tech: [".NET", "AngularJS", "C#", "SQL Server"],
+      link: "https://crm.v4system.com.br/",
+      icon: Code2,
+    },
+    {
+      title: "V4 System - CRM Mobile",
+      description: t("projects.items.v4_mobile.desc"),
+      tech: ["React Native", "TypeScript", "Expo", "API .NET"],
+      link: "#",
+      status: t("projects.items.v4_mobile.status"),
+      icon: Smartphone,
+    },
+    {
+      title: "Under Control",
+      description: t("projects.items.under_control.desc"),
+      tech: ["Next.js", ".NET", "TypeScript", "Tailwind CSS"],
+      link: "https://www.undercontrol.online",
+      status: t("projects.items.under_control.status"),
+      icon: LayoutGrid,
+    },
+    {
+      title: "Bíblia Online",
+      description: t("projects.items.bible.desc"),
+      tech: ["React", "TypeScript", "Vite", "bible-api.com"],
+      path: "/biblia",
+      icon: BookOpen,
+    },
+  ];
+
   return (
     <section id="projetos" className="min-h-screen flex items-center section-glow py-24 mb-12">
       <div className="container mx-auto px-6 md:px-12 lg:px-24 relative z-10">
         <div className="mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <h2 className="font-heading text-3xl md:text-4xl font-medium text-foreground flex items-center gap-3">
             <Code2 className="text-primary" size={32} />
-            Projetos
+            {t("projects.title")}
           </h2>
           <div className="h-1 w-20 bg-primary mt-4 rounded-full"></div>
           <p className="text-muted-foreground mt-6 text-lg max-w-2xl font-body">
-            Alguns dos trabalhos que desenvolvi, utilizando tecnologias de ponta para entregar soluções escaláveis e eficientes.
+            {t("projects.subtitle")}
           </p>
         </div>
 

@@ -2,9 +2,10 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   BookOpen, ChevronLeft, ChevronRight, Search, X,
-  ArrowLeft, AlignJustify, Book, Hash
+  ArrowLeft, AlignJustify, Book, Hash, Globe
 } from "lucide-react";
 import { BIBLE_BOOKS, AT_BOOKS, NT_BOOKS, BibleBook } from "@/data/bibleBooks";
+import { useTranslation } from "react-i18next";
 
 interface BibleVerse {
   book_id: string;
@@ -21,13 +22,13 @@ interface PassageResponse {
 }
 
 // ─── Busca o capítulo via API (com fallback direto à bible-api.com em dev) ────
-async function fetchChapter(bookId: string, chapter: number): Promise<PassageResponse> {
-  // bible-api.com usa '+' para espaços (ex: "1+samuel+1"), não %20
+async function fetchChapter(bookId: string, chapter: number, language: string): Promise<PassageResponse> {
   const ref = `${bookId} ${chapter}`.toLowerCase().replace(/\s+/g, "+");
+  const translation = language.startsWith("pt") ? "almeida" : "web";
   const devMode = import.meta.env.DEV;
   const url = devMode
-    ? `https://bible-api.com/${ref}?translation=almeida`
-    : `/api/bible-passage?ref=${encodeURIComponent(`${bookId} ${chapter}`)}`;
+    ? `https://bible-api.com/${ref}?translation=${translation}`
+    : `/api/bible-passage?ref=${encodeURIComponent(`${bookId} ${chapter}`)}&translation=${translation}`;
 
   const res = await fetch(url);
   if (!res.ok) throw new Error("Erro ao buscar capítulo");
@@ -36,6 +37,7 @@ async function fetchChapter(bookId: string, chapter: number): Promise<PassageRes
 
 // ─── Componente de busca inline ────────────────────────────────────────────────
 function BibleSearch({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<BibleBook[]>([]);
   const navigate = useNavigate();
@@ -53,7 +55,7 @@ function BibleSearch({ onClose }: { onClose: () => void }) {
   }, [query]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex items-start justify-center pt-20 px-4">
+    <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex items-start justify-center pt-20 px-4 font-body">
       <div className="w-full max-w-lg">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
@@ -61,7 +63,7 @@ function BibleSearch({ onClose }: { onClose: () => void }) {
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar livro... (ex: Salmos, Jo, Gn)"
+            placeholder={t("bible.search_placeholder")}
             className="w-full bg-card border border-border rounded-xl pl-12 pr-12 py-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors text-base font-body"
           />
           <button onClick={onClose} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
@@ -74,11 +76,11 @@ function BibleSearch({ onClose }: { onClose: () => void }) {
               <button
                 key={book.id}
                 onClick={() => { navigate(`/biblia/${encodeURIComponent(book.id)}/1`); onClose(); }}
-                className="w-full flex items-center gap-4 px-4 py-3 hover:bg-primary/5 transition-colors text-left"
+                className="w-full flex items-center gap-4 px-4 py-3 hover:bg-primary/5 transition-colors text-left font-body"
               >
                 <span className="text-xs font-heading font-semibold text-primary w-8">{book.abbrev}</span>
                 <span className="text-sm text-foreground font-body">{book.name}</span>
-                <span className="ml-auto text-xs text-muted-foreground">{book.testament} · {book.chapters} caps</span>
+                <span className="ml-auto text-xs text-muted-foreground">{book.testament === "AT" ? t("bible.old_testament") : t("bible.new_testament")} · {book.chapters} {t("bible.chapters").toLowerCase()}</span>
               </button>
             ))}
           </div>
@@ -98,16 +100,17 @@ function BookSidebar({
   onSelect: (book: BibleBook) => void;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   return (
-    <div className="fixed inset-0 z-40 flex">
+    <div className="fixed inset-0 z-40 flex font-body">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-72 sm:w-80 h-full bg-card border-r border-border flex flex-col overflow-hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <div className="flex items-center gap-2">
             <BookOpen size={18} className="text-primary" />
-            <span className="font-heading font-semibold text-sm text-foreground">Livros da Bíblia</span>
+            <span className="font-heading font-semibold text-sm text-foreground uppercase tracking-widest">{t("bible.books")}</span>
           </div>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground p-1">
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground p-1 rounded-lg hover:bg-muted/40 transition-colors">
             <X size={16} />
           </button>
         </div>
@@ -116,7 +119,7 @@ function BookSidebar({
           {/* Antigo Testamento */}
           <div className="px-4 pt-4 pb-1">
             <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-heading font-semibold">
-              Antigo Testamento
+              {t("bible.old_testament")}
             </p>
           </div>
           {AT_BOOKS.map((book) => (
@@ -132,9 +135,9 @@ function BookSidebar({
               <span className={`text-[10px] font-heading font-bold w-6 ${selectedBook?.id === book.id ? "text-primary" : "text-muted-foreground"}`}>
                 {book.abbrev}
               </span>
-              <span className="text-xs font-body">{book.name}</span>
+              <span className="text-xs font-body font-medium">{book.name}</span>
               <span className="ml-auto text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-                {book.chapters} caps
+                {book.chapters} {t("bible.chapters").toLowerCase()}
               </span>
             </button>
           ))}
@@ -142,7 +145,7 @@ function BookSidebar({
           {/* Novo Testamento */}
           <div className="px-4 pt-5 pb-1">
             <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground font-heading font-semibold">
-              Novo Testamento
+              {t("bible.new_testament")}
             </p>
           </div>
           {NT_BOOKS.map((book) => (
@@ -158,9 +161,9 @@ function BookSidebar({
               <span className={`text-[10px] font-heading font-bold w-6 ${selectedBook?.id === book.id ? "text-primary" : "text-muted-foreground"}`}>
                 {book.abbrev}
               </span>
-              <span className="text-xs font-body">{book.name}</span>
+              <span className="text-xs font-body font-medium">{book.name}</span>
               <span className="ml-auto text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-                {book.chapters} caps
+                {book.chapters} {t("bible.chapters").toLowerCase()}
               </span>
             </button>
           ))}
@@ -175,6 +178,7 @@ function BookSidebar({
 export default function BibliaPage() {
   const { bookId, chapter } = useParams<{ bookId?: string; chapter?: string }>();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
   const currentBook = BIBLE_BOOKS.find((b) => b.id === decodeURIComponent(bookId ?? "")) ?? BIBLE_BOOKS[0];
   const currentChapter = Math.min(Math.max(Number(chapter) || 1, 1), currentBook.chapters);
@@ -187,19 +191,24 @@ export default function BibliaPage() {
   const [highlightedVerse, setHighlightedVerse] = useState<number | null>(null);
   const [showChapterGrid, setShowChapterGrid] = useState(false);
 
+  const toggleLanguage = () => {
+    const nextLng = i18n.language.startsWith("pt") ? "en-US" : "pt-BR";
+    i18n.changeLanguage(nextLng);
+  };
+
   const loadChapter = useCallback(async () => {
     setLoading(true);
     setError(null);
     setPassage(null);
     try {
-      const data = await fetchChapter(currentBook.id, currentChapter);
+      const data = await fetchChapter(currentBook.id, currentChapter, i18n.language);
       setPassage(data);
     } catch {
-      setError("Não foi possível carregar este capítulo. Tente novamente.");
+      setError(t("bible.load_error"));
     } finally {
       setLoading(false);
     }
-  }, [currentBook.id, currentChapter]);
+  }, [currentBook.id, currentChapter, i18n.language, t]);
 
   useEffect(() => {
     loadChapter();
@@ -244,7 +253,7 @@ export default function BibliaPage() {
           <button
             onClick={() => navigate("/")}
             className="text-muted-foreground hover:text-foreground transition-colors p-1.5 rounded-lg hover:bg-muted/40"
-            title="Voltar ao site"
+            title={t("bible.back_to_site")}
           >
             <ArrowLeft size={18} />
           </button>
@@ -254,7 +263,7 @@ export default function BibliaPage() {
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border hover:border-primary/40 hover:bg-primary/5 transition-all group"
           >
             <AlignJustify size={15} className="text-muted-foreground group-hover:text-primary transition-colors" />
-            <span className="text-xs font-heading font-medium text-foreground/80 hidden sm:block">{currentBook.name}</span>
+            <span className="text-xs font-heading font-medium text-foreground/80 hidden sm:block font-body uppercase tracking-wider">{currentBook.name}</span>
           </button>
 
           {/* Livro + capítulo atual */}
@@ -275,25 +284,36 @@ export default function BibliaPage() {
           <button
             onClick={() => setShowSearch(true)}
             className="text-muted-foreground hover:text-foreground transition-colors p-1.5 rounded-lg hover:bg-muted/40"
-            title="Buscar livro"
           >
             <Search size={18} />
+          </button>
+
+          <button 
+            onClick={toggleLanguage}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border hover:border-primary/40 hover:bg-primary/5 transition-all group"
+            title={i18n.language.startsWith("pt") ? "Change to English" : "Mudar para Português"}
+          >
+            <Globe size={14} className="text-muted-foreground group-hover:text-primary transition-colors" />
+            <span className="text-[10px] uppercase tracking-widest font-bold text-foreground/70 group-hover:text-primary min-w-[18px]">
+              {i18n.language.startsWith("pt") ? "EN" : "PT"}
+            </span>
           </button>
         </div>
 
         {/* Grade de capítulos */}
         {showChapterGrid && (
-          <div className="border-t border-border bg-card px-4 py-3">
+          <div className="border-t border-border bg-card px-4 py-3 animate-in fade-in slide-in-from-top-2">
             <div className="max-w-3xl mx-auto">
-              <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-heading mb-2">
-                Capítulos — {currentBook.name}
+              <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-heading mb-3 flex items-center gap-2">
+                <Hash size={10} className="text-primary" />
+                {t("bible.chapters")} — <span className="text-foreground">{currentBook.name}</span>
               </p>
-              <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto">
+              <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto pr-1 pb-1">
                 {Array.from({ length: currentBook.chapters }, (_, i) => i + 1).map((ch) => (
                   <button
                     key={ch}
                     onClick={() => { goToChapter(ch); setShowChapterGrid(false); }}
-                    className={`w-9 h-9 rounded-lg text-xs font-heading font-medium transition-all ${
+                    className={`w-9 h-9 rounded-lg text-xs font-heading font-bold transition-all ${
                       ch === currentChapter
                         ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                         : "bg-muted/40 text-foreground/60 hover:bg-primary/20 hover:text-primary"
@@ -309,31 +329,31 @@ export default function BibliaPage() {
       </header>
 
       {/* ── Conteúdo principal ────────────────────────────────────────── */}
-      <main className="max-w-3xl mx-auto px-4 py-8 pb-24">
+      <main className="max-w-3xl mx-auto px-4 py-8 pb-24 font-body">
         {/* Cabeçalho do capítulo */}
         <div className="flex items-center gap-3 mb-8">
-          <div className="p-2 rounded-xl bg-primary/10">
-            <Book size={20} className="text-primary" />
+          <div className="p-2.5 rounded-xl bg-primary/10">
+            <BookOpen size={20} className="text-primary" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-heading font-semibold text-foreground">
+            <h1 className="text-xl sm:text-2xl font-heading font-semibold text-foreground tracking-tight">
               {currentBook.name}
             </h1>
-            <p className="text-xs text-muted-foreground font-body">
-              Capítulo {currentChapter} · {currentBook.testament === "AT" ? "Antigo Testamento" : "Novo Testamento"}
+            <p className="text-xs text-muted-foreground font-body font-medium uppercase tracking-wider mt-0.5">
+              {t("bible.chapters")} {currentChapter} · {currentBook.testament === "AT" ? t("bible.old_testament") : t("bible.new_testament")}
             </p>
           </div>
         </div>
 
         {/* Estados */}
         {loading && (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="flex gap-4 animate-pulse">
-                <div className="w-6 h-4 bg-muted rounded shrink-0 mt-1" />
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-muted rounded w-full" />
-                  <div className="h-4 bg-muted rounded w-4/5" />
+                <div className="w-6 h-4 bg-muted/60 rounded shrink-0 mt-1" />
+                <div className="flex-1 space-y-2.5">
+                  <div className="h-4 bg-muted/60 rounded w-full" />
+                  <div className="h-4 bg-muted/60 rounded w-4/5" />
                 </div>
               </div>
             ))}
@@ -341,36 +361,39 @@ export default function BibliaPage() {
         )}
 
         {error && (
-          <div className="text-center py-16">
-            <p className="text-muted-foreground mb-4">{error}</p>
+          <div className="text-center py-20 flex flex-col items-center">
+            <div className="p-4 rounded-full bg-destructive/10 text-destructive mb-4">
+              <X size={32} />
+            </div>
+            <p className="text-muted-foreground mb-6 font-medium">{error}</p>
             <button
               onClick={loadChapter}
-              className="px-5 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-heading"
+              className="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-heading font-bold hover:opacity-90 transition-opacity active:scale-95"
             >
-              Tentar novamente
+              {t("bible.retry")}
             </button>
           </div>
         )}
 
         {passage && !loading && (
-          <div className="space-y-0">
+          <div className="space-y-1">
             {passage.verses.map((v) => (
               <div
                 key={v.verse}
                 onClick={() => setHighlightedVerse(highlightedVerse === v.verse ? null : v.verse)}
-                className={`flex gap-4 px-3 py-2 rounded-xl cursor-pointer transition-all group ${
+                className={`flex gap-4 px-3 py-2.5 rounded-xl cursor-pointer transition-all group ${
                   highlightedVerse === v.verse
-                    ? "bg-primary/10 border border-primary/20"
+                    ? "bg-primary/10 border border-primary/20 shadow-sm"
                     : "hover:bg-muted/30 border border-transparent"
                 }`}
               >
-                <span className={`text-xs font-heading font-bold mt-1 w-6 shrink-0 text-right transition-colors ${
-                  highlightedVerse === v.verse ? "text-primary" : "text-muted-foreground/50 group-hover:text-muted-foreground"
+                <span className={`text-xs font-heading font-bold mt-1.5 w-6 shrink-0 text-right transition-colors ${
+                  highlightedVerse === v.verse ? "text-primary scale-110" : "text-muted-foreground/40 group-hover:text-muted-foreground"
                 }`}>
                   {v.verse}
                 </span>
-                <p className={`text-sm sm:text-base leading-relaxed transition-colors ${
-                  highlightedVerse === v.verse ? "text-foreground" : "text-foreground/80"
+                <p className={`text-base sm:text-[17px] leading-relaxed transition-colors font-body ${
+                  highlightedVerse === v.verse ? "text-foreground font-medium" : "text-foreground/80"
                 }`}>
                   {v.text.trim()}
                 </p>
@@ -386,20 +409,20 @@ export default function BibliaPage() {
           <button
             onClick={prevChapter}
             disabled={!hasPrev}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-sm font-heading font-medium text-foreground/80 hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-sm font-heading font-bold text-foreground/80 hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all disabled:opacity-20 disabled:cursor-not-allowed group active:scale-95"
           >
-            <ChevronLeft size={16} />
-            <span className="hidden sm:block">Anterior</span>
+            <ChevronLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
+            <span className="hidden sm:block">{t("bible.prev")}</span>
           </button>
 
           {/* Indicador de progresso */}
-          <div className="flex flex-col items-center gap-1 flex-1">
-            <span className="text-[10px] text-muted-foreground font-heading">
+          <div className="flex flex-col items-center gap-1.5 flex-1">
+            <span className="text-[10px] text-muted-foreground font-heading font-bold tracking-widest uppercase">
               {currentChapter} / {currentBook.chapters}
             </span>
-            <div className="w-full max-w-[200px] h-1 bg-muted rounded-full overflow-hidden">
+            <div className="w-full max-w-[180px] h-1 bg-muted rounded-full overflow-hidden">
               <div
-                className="h-full bg-primary rounded-full transition-all duration-500"
+                className="h-full bg-primary rounded-full transition-all duration-700 ease-out"
                 style={{ width: `${(currentChapter / currentBook.chapters) * 100}%` }}
               />
             </div>
@@ -408,10 +431,10 @@ export default function BibliaPage() {
           <button
             onClick={nextChapter}
             disabled={!hasNext}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-sm font-heading font-medium text-foreground/80 hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-sm font-heading font-bold text-foreground/80 hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all disabled:opacity-20 disabled:cursor-not-allowed group active:scale-95"
           >
-            <span className="hidden sm:block">Próximo</span>
-            <ChevronRight size={16} />
+            <span className="hidden sm:block">{t("bible.next")}</span>
+            <ChevronRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
           </button>
         </div>
       </nav>

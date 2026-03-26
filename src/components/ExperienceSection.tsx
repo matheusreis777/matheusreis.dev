@@ -1,55 +1,58 @@
 import { CheckCircle2, Briefcase } from "lucide-react";
-
-const specialties = [
-  {
-    category: "Backend & APIs",
-    items: [
-      "Desenvolvimento de APIs REST escaláveis com .NET",
-      "Implementação de regras de negócio complexas",
-      "Criação de serviços robustos para aplicações corporativas",
-      "Arquitetura de microsserviços",
-    ],
-  },
-  {
-    category: "Integrações",
-    items: [
-      "Integração entre plataformas e sistemas",
-      "Consumo e criação de APIs externas",
-      "Comunicação entre serviços com autenticação e tokens",
-      "Automação de fluxos de dados",
-    ],
-  },
-  {
-    category: "Banco de Dados",
-    items: [
-      "Modelagem de dados eficiente",
-      "Criação de queries complexas",
-      "Otimização de performance de banco",
-      "Relacionamento entre tabelas",
-    ],
-  },
-  {
-    category: "Frontend & Mobile",
-    items: [
-      "Aplicações web modernas com Angular",
-      "Interfaces responsivas com JavaScript",
-      "Aplicações mobile com React Native e FlutterFlow",
-    ],
-  },
-];
+import { useTranslation } from "react-i18next";
 
 const ExperienceSection = () => {
+  const { t } = useTranslation();
+
+  const specialties = [
+    {
+      category: t("exp.categories.backend"),
+      items: [
+        t("exp.items.net_apis"),
+        t("exp.items.complex_rules"),
+        t("exp.items.robust_svcs"),
+        t("exp.items.microservices"),
+      ],
+    },
+    {
+      category: t("exp.categories.integrations"),
+      items: [
+        t("exp.items.plat_integrations"),
+        t("exp.items.ext_apis_io"),
+        t("exp.items.svc_comm_auth"),
+        t("exp.items.data_flow_auto"),
+      ],
+    },
+    {
+      category: t("exp.categories.db"),
+      items: [
+        t("exp.items.eff_modeling"),
+        t("exp.items.complex_queries"),
+        t("exp.items.db_perf"),
+        t("exp.items.table_rel"),
+      ],
+    },
+    {
+      category: t("exp.categories.frontend"),
+      items: [
+        t("exp.items.modern_web"),
+        t("exp.items.resp_interfaces"),
+        t("exp.items.mobile_apps"),
+      ],
+    },
+  ];
+
   return (
     <section id="experiencia" className="min-h-screen flex items-center section-glow py-24 mb-12">
       <div className="container mx-auto px-6 md:px-12 lg:px-24 relative z-10">
         <div className="mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <h2 className="font-heading text-3xl md:text-4xl font-medium text-foreground flex items-center gap-3">
             <Briefcase className="text-primary" size={32} />
-            Experiência Técnica
+            {t("exp.title")}
           </h2>
           <div className="h-1 w-20 bg-primary mt-4 rounded-full"></div>
           <p className="text-muted-foreground mt-6 text-lg max-w-2xl font-body">
-            Minhas áreas de especialidade, evidenciando domínio sólido na criação ponta a ponta de soluções corporativas complexas.
+            {t("exp.subtitle")}
           </p>
         </div>
 

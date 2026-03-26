@@ -1,51 +1,79 @@
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
-
-const links = [
-  { label: "Sobre", href: "#sobre" },
-  { label: "Skills", href: "#skills" },
-  { label: "Soft Skills", href: "#soft-skills" },
-  { label: "Experiência", href: "#experiencia" },
-  { label: "Projetos", href: "#projetos" },
-  { label: "Contato", href: "#contato" },
-];
+import { Menu, X, Globe } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const { t, i18n } = useTranslation();
+
+  const links = [
+    { label: t("nav.about"), href: "#sobre" },
+    { label: t("nav.skills"), href: "#skills" },
+    { label: t("nav.soft_skills"), href: "#soft-skills" },
+    { label: t("nav.experience"), href: "#experiencia" },
+    { label: t("nav.projects"), href: "#projetos" },
+    { label: t("nav.contact"), href: "#contato" },
+  ];
+
+  const toggleLanguage = () => {
+    const nextLng = i18n.language.startsWith("pt") ? "en-US" : "pt-BR";
+    i18n.changeLanguage(nextLng);
+  };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border font-heading">
       <div className="container mx-auto px-6 md:px-12 lg:px-24 flex items-center justify-between h-16">
         <a href="#" className="font-heading text-sm font-medium text-foreground tracking-wide">
           MRM<span className="text-primary">.</span>
         </a>
         {/* Desktop */}
-        <div className="hidden md:flex gap-8">
+        <div className="hidden md:flex items-center gap-8">
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
-              className="group relative font-body text-xs text-muted-foreground uppercase tracking-[0.15em] transition-colors hover:text-primary py-2"
+              className="group relative font-body text-[10px] text-muted-foreground uppercase tracking-[0.2em] transition-colors hover:text-primary py-2"
             >
               {l.label}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 ease-out group-hover:w-full rounded-full"></span>
             </a>
           ))}
+          
+          <button 
+            onClick={toggleLanguage}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border hover:border-primary/40 hover:bg-primary/5 transition-all group"
+            title={i18n.language.startsWith("pt") ? "Change to English" : "Mudar para Português"}
+          >
+            <Globe size={14} className="text-muted-foreground group-hover:text-primary transition-colors" />
+            <span className="text-[10px] uppercase tracking-widest font-bold text-foreground/70 group-hover:text-primary">
+              {i18n.language.startsWith("pt") ? "EN" : "PT"}
+            </span>
+          </button>
         </div>
-        {/* Mobile toggle */}
-        <button onClick={() => setOpen(!open)} className="md:hidden text-foreground">
-          {open ? <X size={20} /> : <Menu size={20} />}
-        </button>
+
+        {/* Mobile menu controls */}
+        <div className="flex md:hidden items-center gap-4">
+          <button 
+            onClick={toggleLanguage}
+            className="p-2 rounded-lg hover:bg-muted/40 text-muted-foreground transition-colors"
+          >
+            <Globe size={18} />
+          </button>
+          <button onClick={() => setOpen(!open)} className="text-foreground p-1">
+            {open ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
+
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden border-t border-border bg-background px-6 py-4 space-y-4">
+        <div className="md:hidden border-t border-border bg-background px-6 py-4 space-y-4 animate-in slide-in-from-top-4">
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="block font-body text-sm text-muted-foreground hover:text-primary transition-colors"
+              className="block font-body text-sm font-medium text-muted-foreground hover:text-primary transition-colors py-1"
             >
               {l.label}
             </a>

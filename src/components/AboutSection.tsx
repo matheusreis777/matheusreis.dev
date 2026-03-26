@@ -1,33 +1,36 @@
-import { User, Briefcase, Database, GraduationCap, FileText, Download, Maximize2, Award, ExternalLink } from "lucide-react";
+import { User, Briefcase, Database, GraduationCap, FileText, Download, Maximize2, Award } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
-const documents = [
-  {
-    name: "Diploma ADS",
-    category: "Graduação",
-    issuer: "UNIDERP",
-    file: "/DiplomaDigital-ADS-MatheusReisMendonca.pdf",
-    icon: GraduationCap,
-  },
-  {
-    name: "Entendendo a web por baixo dos panos",
-    category: "Curso",
-    issuer: "Alura",
-    file: "/Matheus Reis Mendonça - Curso HTTP_ Entendendo a web por baixo dos panos - Alura.pdf",
-    icon: Award,
-  },
-];
+import { useTranslation, Trans } from "react-i18next";
 
 const AboutSection = () => {
+  const { t } = useTranslation();
+
+  const documents = [
+    {
+      name: "Diploma ADS",
+      category: t("about.doc_grad"),
+      issuer: "UNIDERP",
+      file: "/DiplomaDigital-ADS-MatheusReisMendonca.pdf",
+      icon: GraduationCap,
+    },
+    {
+      name: t("pt-BR") === "pt-BR" ? "Entendendo a web por baixo dos panos" : "Understanding the web under the hood",
+      category: t("about.doc_course"),
+      issuer: "Alura",
+      file: "/Matheus Reis Mendonça - Curso HTTP_ Entendendo a web por baixo dos panos - Alura.pdf",
+      icon: Award,
+    },
+  ];
+
   return (
     <section id="sobre" className="min-h-screen flex items-center section-glow py-24 mb-12">
       <div className="container mx-auto px-6 md:px-12 lg:px-24 relative z-10">
         <div className="mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <h2 className="font-heading text-3xl md:text-4xl font-medium text-foreground flex items-center gap-3">
             <User className="text-primary" size={32} />
-            Sobre Mim
+            {t("about.title")}
           </h2>
           <div className="h-1 w-20 bg-primary mt-4 rounded-full"></div>
         </div>
@@ -54,19 +57,19 @@ const AboutSection = () => {
                 <DialogContent className="max-w-3xl border-none bg-transparent p-0 shadow-none sm:rounded-none">
                   <img 
                     src="/profile-me.jpg" 
-                    alt="Matheus Reis Mendonça (Ampliada)" 
+                    alt="Matheus Reis Mendonça" 
                     className="w-full h-auto rounded-lg shadow-2xl"
                   />
                 </DialogContent>
               </Dialog>
               
               <h3 className="font-heading text-lg font-semibold text-foreground">Matheus Reis Mendonça</h3>
-              <p className="text-primary text-xs font-medium tracking-[0.1em] uppercase mt-1">Desenvolvedor Pleno</p>
+              <p className="text-primary text-xs font-medium tracking-[0.1em] uppercase mt-1">{t("nav.about")} Pleno</p>
             </div>
 
-            {/* Destaques (flex-1 para esticar e alinhar com a bio) */}
+            {/* Destaques */}
             <div className="bg-card/20 border border-border/40 rounded-3xl p-8 backdrop-blur-sm shadow-sm transition-all hover:bg-card/30 flex-1">
-              <h3 className="font-heading text-xl font-medium text-foreground mb-6">Destaques</h3>
+              <h3 className="font-heading text-xl font-medium text-foreground mb-6">{t("about.highlights_title")}</h3>
               
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
@@ -74,8 +77,8 @@ const AboutSection = () => {
                     <Briefcase className="text-primary" size={20} />
                   </div>
                   <div>
-                    <p className="font-heading text-2xl font-semibold text-foreground">4+ anos</p>
-                    <p className="text-muted-foreground text-sm font-body mt-1">Desenvolvimento .NET & Angular</p>
+                    <p className="font-heading text-2xl font-semibold text-foreground">{t("about.exp_years")}</p>
+                    <p className="text-muted-foreground text-sm font-body mt-1">{t("about.exp_desc")}</p>
                   </div>
                 </div>
 
@@ -84,8 +87,8 @@ const AboutSection = () => {
                     <Database className="text-primary" size={20} />
                   </div>
                   <div>
-                    <p className="font-heading text-2xl font-semibold text-foreground">8+ anos</p>
-                    <p className="text-muted-foreground text-sm font-body mt-1">Modelagem & Banco de Dados</p>
+                    <p className="font-heading text-2xl font-semibold text-foreground">{t("about.db_years")}</p>
+                    <p className="text-muted-foreground text-sm font-body mt-1">{t("about.db_desc")}</p>
                   </div>
                 </div>
 
@@ -94,8 +97,8 @@ const AboutSection = () => {
                     <GraduationCap className="text-primary" size={20} />
                   </div>
                   <div>
-                    <p className="font-heading text-lg font-semibold text-foreground">Ads</p>
-                    <p className="text-muted-foreground text-sm font-body mt-1">Graduado</p>
+                    <p className="font-heading text-lg font-semibold text-foreground">{t("about.edu_title")}</p>
+                    <p className="text-muted-foreground text-sm font-body mt-1">{t("about.edu_desc")}</p>
                   </div>
                 </div>
               </div>
@@ -107,59 +110,63 @@ const AboutSection = () => {
             <div className="bg-card/20 border border-border/40 rounded-3xl p-8 lg:p-10 h-full backdrop-blur-sm transition-all hover:bg-card/30">
               <div className="prose prose-invert max-w-none text-justify">
                 <p className="text-foreground text-lg leading-relaxed font-body mb-6">
-                  Olá, sou o <span className="font-semibold text-primary">Matheus Reis Mendonça</span>, um Desenvolvedor Fullstack Pleno focado em criar sistemas robustos, escaláveis e eficientes, atuando desde a modelagem de dados até a interface do usuário.
+                  <Trans i18nKey="about.bio_intro">
+                    Olá, sou o <span className="font-semibold text-primary">Matheus Reis Mendonça</span>, um Desenvolvedor Fullstack Pleno focado em criar sistemas robustos, escaláveis e eficientes, atuando desde a modelagem de dados até a interface do usuário.
+                  </Trans>
                 </p>
                 
-                <h4 className="text-foreground font-heading font-medium text-xl mt-8 mb-4 border-b border-border/50 pb-2 text-left">Minha Trajetória</h4>
+                <h4 className="text-foreground font-heading font-medium text-xl mt-8 mb-4 border-b border-border/50 pb-2 text-left">{t("about.bio_trajectory_title")}</h4>
                 <p className="text-muted-foreground text-base leading-relaxed font-body mb-4">
-                  Com uma forte bagagem de quase uma década trabalhando com bancos de dados e mais de 4 anos dedicados ao desenvolvimento de software, adquiri uma visão profunda e sistêmica sobre como aplicações de sucesso são arquitetadas nos bastidores.
+                  {t("about.bio_trajectory_p1")}
                 </p>
                 <p className="text-muted-foreground text-base leading-relaxed font-body mb-4">
-                  Minha principal expertise reside no backend utilizando <strong className="text-foreground font-medium">C# e a plataforma .NET</strong>, a qual emprego no desenvolvimento de APIs REST escaláveis para sistemas corporativos, garantindo a performance da lógica de negócios mais complexa.
+                  <Trans i18nKey="about.bio_trajectory_p2">
+                    Minha principal expertise reside no backend utilizando <strong className="text-foreground font-medium">C# e a plataforma .NET</strong>, a qual emprego no desenvolvimento de APIs REST escaláveis para sistemas corporativos, garantindo a performance da lógica de negócios mais complexa.
+                  </Trans>
                 </p>
 
-                <h4 className="text-foreground font-heading font-medium text-xl mt-8 mb-4 border-b border-border/50 pb-2 text-left">Como eu trabalho</h4>
+                <h4 className="text-foreground font-heading font-medium text-xl mt-8 mb-4 border-b border-border/50 pb-2 text-left">{t("about.bio_work_title")}</h4>
                 <p className="text-muted-foreground text-base leading-relaxed font-body mb-4">
-                  Acredito que o verdadeiro valor da tecnologia está em resolver problemas de negócios de maneira elegante. Meu perfil Fullstack me permite navegar sem atritos por toda a esteira de desenvolvimento do ciclo de vida da aplicação — ajudando as empresas a reduzirem ruídos de comunicação entre as barreiras de frontend e backend.
+                  {t("about.bio_work_p1")}
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom Section: Curriculum & Documents (Full Width Mixed) */}
+        {/* Bottom Section: Curriculum & Documents */}
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
           
-          {/* Currículo Card (Left) */}
+          {/* Currículo Card */}
           <div className="lg:col-span-4 bg-card/20 border border-border/40 rounded-3xl p-8 backdrop-blur-sm shadow-sm transition-all hover:bg-card/30 flex flex-col items-center justify-center text-center">
             <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
               <FileText className="text-primary" size={32} />
             </div>
-            <h3 className="font-heading text-xl font-medium text-foreground mb-2">Currículo</h3>
-            <p className="text-muted-foreground text-sm font-body mb-6">Minha trajetória detalhada e qualificações profissionais.</p>
+            <h3 className="font-heading text-xl font-medium text-foreground mb-2">{t("about.resume_title")}</h3>
+            <p className="text-muted-foreground text-sm font-body mb-6">{t("about.resume_desc")}</p>
             <Button variant="secondary" size="sm" asChild className="w-full bg-primary/10 hover:bg-primary/20 text-primary border-primary/20">
               <a href="/MATHEUS REIS MENDONÇA - CURRICULO.pdf" download className="flex items-center gap-2">
                 <Download size={16} />
-                Baixar Currículo
+                {t("about.resume_btn")}
               </a>
             </Button>
           </div>
 
-          {/* Certificados & Diplomas Table (Right) */}
+          {/* Certificados & Diplomas Table */}
           <div className="lg:col-span-8 bg-card/20 border border-border/40 rounded-3xl p-8 backdrop-blur-sm shadow-sm transition-all hover:bg-card/30">
             <h3 className="font-heading text-xl font-medium text-foreground mb-6 flex items-center gap-3">
               <Award className="text-primary" size={24} />
-              Certificações e Diplomas
+              {t("about.certs_title")}
             </h3>
             
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow className="border-border/40 hover:bg-transparent">
-                    <TableHead className="text-foreground/70 font-heading">Documento</TableHead>
-                    <TableHead className="text-foreground/70 font-heading hidden md:table-cell">Tipo</TableHead>
-                    <TableHead className="text-foreground/70 font-heading hidden sm:table-cell">Emissor</TableHead>
-                    <TableHead className="text-right text-foreground/70 font-heading">Ação</TableHead>
+                    <TableHead className="text-foreground/70 font-heading">{t("about.table_doc")}</TableHead>
+                    <TableHead className="text-foreground/70 font-heading hidden md:table-cell">{t("about.table_type")}</TableHead>
+                    <TableHead className="text-foreground/70 font-heading hidden sm:table-cell">{t("about.table_issuer")}</TableHead>
+                    <TableHead className="text-right text-foreground/70 font-heading">{t("about.table_action")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -181,7 +188,7 @@ const AboutSection = () => {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" asChild title="Baixar">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" asChild title={t("hero.btn_download")}>
                             <a href={doc.file} download>
                               <Download size={16} />
                             </a>

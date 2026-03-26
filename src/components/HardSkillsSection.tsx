@@ -1,57 +1,59 @@
 import { Code2, Layout, Database, Globe, Smartphone, Cloud } from "lucide-react";
-
-const skillGroups = [
-  {
-    title: "Backend",
-    icon: Code2,
-    skills: ["C#", ".NET", "ASP.NET Core", "Web API", "APIs REST escaláveis", "Regras de negócio complexas", "Arquitetura corporativa"],
-  },
-  {
-    title: "Frontend",
-    icon: Layout,
-    skills: ["Angular", "AngularJS", "JavaScript", "HTML", "CSS"],
-  },
-  {
-    title: "Mobile",
-    icon: Smartphone,
-    skills: ["React Native", "FlutterFlow", "Aplicações mobile multiplataforma"],
-  },
-  {
-    title: "Banco de Dados",
-    icon: Database,
-    skills: ["SQL Server", "PostgreSQL", "Supabase", "Modelagem de dados", "Queries complexas", "Otimização de performance", "Relacionamento entre tabelas"],
-  },
-  {
-    title: "Integrações",
-    icon: Globe,
-    skills: ["APIs externas", "Comunicação entre serviços", "Autenticação e tokens", "Automação de fluxos de dados", "Requisições HTTP"],
-  },
-  {
-    title: "Cloud & DevOps",
-    icon: Cloud,
-    skills: ["Azure", "Docker", "CI/CD", "Git", "Deployments", "Hospedagem"],
-  },
-];
+import { useTranslation } from "react-i18next";
 
 const HardSkillsSection = () => {
+  const { t } = useTranslation();
+
+  const skillGroups = [
+    {
+      title: t("skills.hard.groups.backend"),
+      icon: Code2,
+      skills: ["C#", ".NET", "ASP.NET Core", "Web API", t("skills.hard.items.scalable_apis"), t("skills.hard.items.complex_rules"), t("skills.hard.items.enterprise_arch")],
+    },
+    {
+      title: t("skills.hard.groups.frontend"),
+      icon: Layout,
+      skills: ["Angular", "AngularJS", "JavaScript", "HTML", "CSS"],
+    },
+    {
+      title: t("skills.hard.groups.mobile"),
+      icon: Smartphone,
+      skills: ["React Native", "FlutterFlow", t("skills.hard.items.mobile_apps")],
+    },
+    {
+      title: t("skills.hard.groups.db"),
+      icon: Database,
+      skills: ["SQL Server", "PostgreSQL", "Supabase", t("skills.hard.items.data_modeling"), t("skills.hard.items.complex_queries"), t("skills.hard.items.perf_opt"), t("skills.hard.items.db_rel")],
+    },
+    {
+      title: t("skills.hard.groups.integrations"),
+      icon: Globe,
+      skills: [t("skills.hard.items.ext_apis"), t("skills.hard.items.svc_comm"), t("skills.hard.items.auth_tokens"), t("skills.hard.items.data_flow_auto"), t("skills.hard.items.http_req")],
+    },
+    {
+      title: t("skills.hard.groups.cloud"),
+      icon: Cloud,
+      skills: ["Azure", "Docker", "CI/CD", "Git", t("skills.hard.items.deployments"), t("skills.hard.items.hosting")],
+    },
+  ];
+
   return (
     <section id="skills" className="min-h-screen flex items-center section-glow py-24 mb-12">
       <div className="container mx-auto px-6 md:px-12 lg:px-24 relative z-10">
         <div className="mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <h2 className="font-heading text-3xl md:text-4xl font-medium text-foreground flex items-center gap-3">
             <Code2 className="text-primary" size={32} />
-            Habilidades Técnicas
+            {t("skills.hard.title")}
           </h2>
           <div className="h-1 w-20 bg-primary mt-4 rounded-full"></div>
           <p className="text-muted-foreground mt-6 text-lg max-w-2xl font-body">
-            Um panorama das principais tecnologias, frameworks e ferramentas que utilizo no meu dia a dia para construir soluções eficientes.
+            {t("skills.hard.subtitle")}
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {skillGroups.map((group, index) => {
             const Icon = group.icon;
-            // Adding staggered animation delay based on index
             const delayClass = `delay-[${(index + 1) * 100}ms]`;
             
             return (

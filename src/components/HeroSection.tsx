@@ -4,8 +4,10 @@ import { toast } from "sonner";
 import { toPng } from "html-to-image";
 import ParticleNetwork from "./ParticleNetwork";
 import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
+import { useTranslation, Trans } from "react-i18next";
 
 const HeroSection = () => {
+  const { t } = useTranslation();
   const [dailyVerse, setDailyVerse] = useState<{ text: string; reference: string } | null>(null);
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -40,14 +42,14 @@ const HeroSection = () => {
     setIsGenerating(true);
     const blob = await generatePngBlob();
     setIsGenerating(false);
-    if (!blob) { toast.error("Erro ao gerar imagem."); return; }
+    if (!blob) { toast.error(t("hero.generate_error")); return; }
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `versiculo-${dailyVerse.reference.replace(/\s/g, "-")}.png`;
+    a.download = `verse-${dailyVerse.reference.replace(/\s/g, "-")}.png`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("Vers\u00edculo baixado com sucesso!");
+    toast.success(t("hero.download_success"));
   };
 
   const handleShare = async () => {
@@ -55,20 +57,20 @@ const HeroSection = () => {
     setIsGenerating(true);
     const blob = await generatePngBlob();
     setIsGenerating(false);
-    if (!blob) { toast.error("Erro ao gerar imagem."); return; }
-    const file = new File([blob], `versiculo-${dailyVerse.reference.replace(/\s/g, "-")}.png`, { type: "image/png" });
+    if (!blob) { toast.error(t("hero.generate_error")); return; }
+    const file = new File([blob], `verse-${dailyVerse.reference.replace(/\s/g, "-")}.png`, { type: "image/png" });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({
-          title: "Vers\u00edculo Di\u00e1rio",
+          title: t("hero.share_title"),
           text: `"${dailyVerse.text}" - ${dailyVerse.reference}\n\nmatheusreis.dev`,
           files: [file],
         });
       } catch (e: unknown) {
-        if (e instanceof Error && e.name !== "AbortError") toast.error("Erro ao compartilhar.");
+        if (e instanceof Error && e.name !== "AbortError") toast.error(t("hero.share_error"));
       }
     } else {
-      toast.error("Seu navegador n\u00e3o suporta compartilhamento. Use o bot\u00e3o de baixar.");
+      toast.error(t("hero.browser_not_support_share"));
     }
   };
 
@@ -76,8 +78,6 @@ const HeroSection = () => {
     const fetchVerse = async () => {
       try {
         const today = new Date().toISOString().split("T")[0];
-
-        // Cache local: evita chamada redundante no mesmo browser no mesmo dia
         const storedData = localStorage.getItem("dailyVerse");
         if (storedData) {
           const parsedData = JSON.parse(storedData);
@@ -87,7 +87,6 @@ const HeroSection = () => {
           }
         }
 
-        // Chama a Vercel Serverless Function — mesma resposta para todos os devices
         const response = await fetch("/api/daily-verse");
         if (response.ok) {
           const data = await response.json();
@@ -109,18 +108,22 @@ const HeroSection = () => {
       <div className="container mx-auto px-6 md:px-12 lg:px-24 relative z-10">
         <div className="max-w-3xl">
           <p className="text-muted-foreground text-sm tracking-[0.3em] uppercase mb-6 font-body">
-            Fullstack Developer
+            {t("hero.role")}
           </p>
           <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-medium text-foreground leading-tight mb-6">
-            Matheus Reis
+            {t("hero.title_first")}
             <br />
-            <span className="text-primary">Mendonça</span>
+            <span className="text-primary">{t("hero.title_last")}</span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground font-body leading-relaxed mb-4 max-w-2xl text-justify">
-            Desenvolvedor Fullstack com especialização em backend utilizando <span className="text-foreground">.NET</span> e a linguagem <span className="text-foreground">C#</span>, com sólida experiência no desenvolvimento de <span className="text-foreground">APIs REST</span> escaláveis, integrações entre sistemas e aplicações corporativas.
+            <Trans i18nKey="hero.description_1">
+              Desenvolvedor Fullstack com especialização em backend utilizando <span className="text-foreground">.NET</span> e a linguagem <span className="text-foreground">C#</span>, com sólida experiência no desenvolvimento de <span className="text-foreground">APIs REST</span> escaláveis, integrações entre sistemas e aplicações corporativas.
+            </Trans>
           </p>
           <p className="text-base text-muted-foreground font-body leading-relaxed mb-8 max-w-2xl text-justify">
-            Atuo na construção de soluções completas, desde a modelagem e otimização de banco de dados até o desenvolvimento de interfaces modernas com <span className="text-foreground">Angular</span>, <span className="text-foreground">JavaScript</span> e aplicações mobile com <span className="text-foreground">React Native</span>, sempre com foco em performance, escalabilidade e qualidade de código.
+            <Trans i18nKey="hero.description_2">
+              Atuo na construção de soluções completas, desde a modelagem e otimização de banco de dados até o desenvolvimento de interfaces modernas com <span className="text-foreground">Angular</span>, <span className="text-foreground">JavaScript</span> e aplicações mobile com <span className="text-foreground">React Native</span>, sempre com foco em performance, escalabilidade e qualidade de código.
+            </Trans>
           </p>
           
           {dailyVerse && (
@@ -128,11 +131,11 @@ const HeroSection = () => {
               <div 
                 onClick={() => {
                   navigator.clipboard.writeText(`"${dailyVerse.text}" - ${dailyVerse.reference}`);
-                  toast.success("Versículo copiado para a área de transferência!");
+                  toast.success(t("hero.verse_copy"));
                   setIsStoryModalOpen(true);
                 }}
                 className="mb-8 max-w-2xl p-4 sm:p-5 rounded-xl bg-primary/5 border border-primary/20 flex flex-col gap-2 relative overflow-hidden group hover:bg-primary/10 transition-all cursor-pointer"
-                title="Copiar e criar Story"
+                title={t("hero.verse_copy")}
               >
                 <div className="absolute top-0 left-0 w-1 h-full bg-primary/50 group-hover:bg-primary transition-colors"></div>
                 <div className="flex items-start gap-3 relative">
@@ -160,9 +163,8 @@ const HeroSection = () => {
                   [&>button]:text-white [&>button]:bg-black/40 [&>button]:hover:bg-black/60
                   [&>button]:p-2 [&>button]:rounded-full [&>button]:backdrop-blur-sm
                 ">
-                  <DialogTitle className="sr-only">Story do Versículo Diário</DialogTitle>
+                  <DialogTitle className="sr-only">{t("hero.story_title")}</DialogTitle>
 
-                  {/* Story Card — ocupa o máximo possível da tela mantendo aspect 9:16 */}
                   <div className="flex flex-col items-center gap-4 w-full px-4 max-w-xs sm:max-w-sm">
                     <div
                       ref={storyRef}
@@ -174,24 +176,15 @@ const HeroSection = () => {
                         shadow-2xl shadow-black/60 overflow-hidden
                       "
                     >
-                      {/* Borrões decorativos */}
                       <div className="absolute top-0 right-0 w-48 h-48 bg-primary/25 rounded-full blur-3xl pointer-events-none" />
                       <div className="absolute bottom-10 left-0 w-48 h-48 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
-
-                      {/* Icone */}
                       <BookOpen className="text-primary/50 mb-6 shrink-0 relative z-10" size={28} />
-
-                      {/* Versículo */}
                       <p className="text-base leading-relaxed text-white/90 italic font-body relative z-10">
                         "{dailyVerse.text}"
                       </p>
-
-                      {/* Referência */}
                       <p className="mt-6 text-sm text-primary font-heading font-semibold relative z-10">
                         — {dailyVerse.reference}
                       </p>
-
-                      {/* Rodapé */}
                       <div className="absolute bottom-6 left-0 w-full text-center z-10">
                         <span className="text-[9px] text-white/30 tracking-[0.3em] font-heading uppercase">
                           matheusreis.dev
@@ -199,7 +192,6 @@ const HeroSection = () => {
                       </div>
                     </div>
 
-                    {/* Botões abaixo do card */}
                     <div className="flex gap-3 w-full">
                       <button
                         onClick={handleDownload}
@@ -207,7 +199,7 @@ const HeroSection = () => {
                         className="flex-1 inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-4 py-3 rounded-xl text-sm font-heading font-medium transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-wait shadow-lg shadow-primary/30"
                       >
                         <Download size={15} />
-                        {isGenerating ? "Gerando..." : "Baixar"}
+                        {isGenerating ? t("hero.btn_generating") : t("hero.btn_download")}
                       </button>
                       {typeof navigator !== "undefined" && navigator.share && (
                         <button
@@ -216,9 +208,9 @@ const HeroSection = () => {
                           className="flex-1 inline-flex items-center justify-center gap-2 border border-white/20 text-white bg-white/10 backdrop-blur-sm px-4 py-3 rounded-xl text-sm font-heading font-medium transition-all hover:bg-white/20 active:scale-95 disabled:opacity-50 disabled:cursor-wait"
                         >
                           <Share2 size={15} />
-                          {isGenerating ? "Gerando..." : "Compartilhar"}
+                          {isGenerating ? t("hero.btn_generating") : t("hero.btn_share")}
                         </button>
-                    )}
+                      )}
                     </div>
                   </div>
                 </DialogContent>
@@ -234,7 +226,7 @@ const HeroSection = () => {
               className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-[10px] font-heading text-sm font-medium tracking-wide transition-all hover:opacity-90 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1"
             >
               <Mail size={16} />
-              Entrar em contato
+              {t("hero.btn_contact")}
             </a>
             <a
               href="https://www.linkedin.com/in/matheus-reis-584098306"
@@ -243,12 +235,11 @@ const HeroSection = () => {
               className="inline-flex items-center justify-center gap-2 border border-border text-foreground px-8 py-3 rounded-[10px] font-heading text-sm font-medium tracking-wide transition-all hover:border-primary hover:text-primary hover:bg-primary/5 hover:-translate-y-1"
             >
               <Linkedin size={16} />
-              Ver LinkedIn
+              {t("hero.btn_linkedin")}
             </a>
           </div>
         </div>
       </div>
-      
     </section>
   );
 };
