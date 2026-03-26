@@ -1,6 +1,14 @@
 import { MessageCircle } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
 const FloatingWhatsApp = () => {
+  const location = useLocation();
+  
+  // Ocultar o botão se estiver na página da Bíblia
+  if (location.pathname.startsWith('/biblia')) {
+    return null;
+  }
+
   return (
     <a
       href="https://wa.me/5567991431860"
