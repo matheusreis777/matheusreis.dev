@@ -195,6 +195,12 @@
       "back_to_site": "Voltar ao site",
       "load_error": "Não foi possível carregar este capítulo. Tente novamente.",
       "retry": "Tentar novamente"
+    },
+    "footer": {
+      "name": "Matheus Reis Mendonça",
+      "role": "Desenvolvedor Fullstack",
+      "bible": "Bíblia Online",
+      "rights": "Todos os direitos reservados"
     }
   }
 }

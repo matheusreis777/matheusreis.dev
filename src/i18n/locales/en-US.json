@@ -195,6 +195,12 @@
       "back_to_site": "Back to site",
       "load_error": "Could not load this chapter. Please try again.",
       "retry": "Try again"
+    },
+    "footer": {
+      "name": "Matheus Reis Mendonca",
+      "role": "Fullstack Developer",
+      "bible": "Daily Bible",
+      "rights": "All rights reserved"
     }
   }
 }
