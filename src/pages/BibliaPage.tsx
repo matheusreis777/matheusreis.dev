@@ -23,7 +23,7 @@ interface PassageResponse {
 // ─── Busca o capítulo via API (com fallback direto à bible-api.com em dev) ────
 async function fetchChapter(bookId: string, chapter: number): Promise<PassageResponse> {
   // bible-api.com usa '+' para espaços (ex: "1+samuel+1"), não %20
-  const ref = `${bookId} ${chapter}`.replace(/\s+/g, "+");
+  const ref = `${bookId} ${chapter}`.toLowerCase().replace(/\s+/g, "+");
   const devMode = import.meta.env.DEV;
   const url = devMode
     ? `https://bible-api.com/${ref}?translation=almeida`

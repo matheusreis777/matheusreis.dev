@@ -37,7 +37,7 @@ export const BIBLE_BOOKS: BibleBook[] = [
   { id: "lamentations",    name: "Lamentações",       abbrev: "Lm",   testament: "AT", chapters: 5   },
   { id: "ezekiel",         name: "Ezequiel",          abbrev: "Ez",   testament: "AT", chapters: 48  },
   { id: "daniel",          name: "Daniel",            abbrev: "Dn",   testament: "AT", chapters: 12  },
-  { id: "hosea",           name: "Oseias",            abbrev: "Os",   testament: "AT", chapters: 14  },
+  { id: "hoseas",          name: "Oseias",            abbrev: "Os",   testament: "AT", chapters: 14  },
   { id: "joel",            name: "Joel",              abbrev: "Jl",   testament: "AT", chapters: 3   },
   { id: "amos",            name: "Amós",              abbrev: "Am",   testament: "AT", chapters: 9   },
   { id: "obadiah",         name: "Obadias",           abbrev: "Ob",   testament: "AT", chapters: 1   },
