@@ -72,29 +72,6 @@ const HeroSection = () => {
     }
   };
 
-  const formatVerse = (text: string): string => {
-    // 1. Primeira letra sempre maiúscula
-    let result = text.trim();
-    result = result.charAt(0).toUpperCase() + result.slice(1);
-
-    // 2. SENHOR em maiúsculas (versões: senhor, Senhor, SENHOR)
-    result = result.replace(/\bsenhor\b/gi, "SENHOR");
-
-    // 3. Pronomes divinos com inicial maiúscula
-    const divinePronouns = [
-      "ele", "eu", "tu", "teu", "tua", "teus", "tuas",
-      "dele", "nele", "lhe"
-    ];
-    for (const word of divinePronouns) {
-      const regex = new RegExp(`\\b${word}\\b`, "gi");
-      result = result.replace(regex, (match) =>
-        match.charAt(0).toUpperCase() + match.slice(1).toLowerCase()
-      );
-    }
-
-    return result;
-  };
-
   useEffect(() => {
     const fetchVerse = async () => {
       try {
