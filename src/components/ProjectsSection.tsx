@@ -1,4 +1,5 @@
-import { ExternalLink, Code2, Globe, Smartphone, LayoutGrid } from "lucide-react";
+import { ExternalLink, Code2, Globe, Smartphone, LayoutGrid, BookOpen } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const projects = [
   {
@@ -30,6 +31,13 @@ const projects = [
     link: "https://www.undercontrol.online",
     status: "Em desenvolvimento",
     icon: LayoutGrid,
+  },
+  {
+    title: "Bíblia Online",
+    description: "Leitura completa da Bíblia em português (Almeida), com todos os 66 livros, navegação por capítulos, busca de livros e versículo diário integrado ao site.",
+    tech: ["React", "TypeScript", "Vite", "bible-api.com"],
+    path: "/biblia",
+    icon: BookOpen,
   },
 ];
 
@@ -64,9 +72,17 @@ const ProjectsSection = () => {
                       {project.status}
                     </span>
                   )}
-                  {project.link !== "#" && (
+                  {'path' in project ? (
+                    <Link
+                      to={project.path as string}
+                      className="p-2 rounded-full hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+                      aria-label={`Abrir ${project.title}`}
+                    >
+                      <ExternalLink size={20} />
+                    </Link>
+                  ) : project.link !== "#" && (
                     <a
-                      href={project.link}
+                      href={project.link as string}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2 rounded-full hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
