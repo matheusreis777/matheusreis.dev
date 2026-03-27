@@ -1,68 +1,122 @@
-# Matheus Reis - Fullstack Developer Portfolio
+# Matheus Reis - Fullstack Vision
 
-Bem-vindo ao repositório do meu portfólio profissional! Este projeto foi desenvolvido para demonstrar minhas habilidades, experiência técnica e projetos como Desenvolvedor Fullstack.
+Portfólio profissional com foco em experiência moderna, performance e internacionalização (PT-BR/EN-US), incluindo página de notícias de tecnologia e APIs serverless para conteúdo dinâmico.
 
-## 🚀 Tecnologias Utilizadas
+## Visão Geral
 
-Este projeto foi construído utilizando tecnologias modernas visando alta performance, responsividade e código limpo:
+Este projeto foi construído com React + TypeScript para apresentar:
 
-*   **[React](https://reactjs.org/)** (com **[Vite](https://vitejs.dev/)** para build rápido)
-*   **[TypeScript](https://www.typescriptlang.org/)** (para tipagem estática e segurança no código)
-*   **[Tailwind CSS](https://tailwindcss.com/)** (para estilização rápida e responsiva)
-*   **[shadcn/ui](https://ui.shadcn.com/)** (componentes acessíveis e customizáveis)
-*   **[Lucide React](https://lucide.dev/)** (para iconografia moderna e leve)
+- Perfil profissional e experiências
+- Hard skills e soft skills
+- Projetos em destaque
+- Página de notícias de tecnologia
+- Integração com APIs serverless (Vercel)
+- Interface responsiva com componentes reutilizáveis
 
-## 🌟 Funcionalidades e Layout
+## Stack Principal
 
-O layout foi projetado com foco em **UX/UI moderno** (estilo "Bento Grid"), apresentando:
+- React 18 + Vite 5
+- TypeScript
+- Tailwind CSS + shadcn/ui (Radix UI)
+- React Router DOM
+- TanStack React Query
+- i18next (pt-BR e en-US)
+- Vite PWA plugin
+- Vercel Functions (pasta `api/`)
+- Vitest + Testing Library
+- Playwright
 
-*   **Hero Section Dinâmica:** Efeito interativo de partículas em rede no background e chamadas claras à ação.
-*   **Navegação Inteligente:** Barra superior com efeitos modernos (`hover` elegante) e layout que adapta perfeitamente em dispositivos móveis.
-*   **Seções de Habilidades:** Cards interativos e visualmente agradáveis dividindo as *Hard Skills* (Backend, Frontend, Cloud, DevOps) de *Soft Skills* essenciais.
-*   **Design Responsivo (Mobile-First):** Estrutura impecável do celular ao desktop.
-*   **Botão Flutuante:** Atalho de contato rápido para o WhatsApp, visível em todas as páginas e independente da barra de rolagem.
-*   **Ambientação Sutil:** Fundos modernos utilizando tons escuros de verde (`hsl(142, 50%, 4%)`) para maximizar o contraste e o conforto visual.
-*   **Performance:** Refatorado com `React.lazy` (Code Splitting) e Event Delegation para manter a página extremamente rápida e evitar gargalos de renderização (Layout Thrashing).
+## Rotas da Aplicação
 
-## 🛠️ Como Executar Localmente
+- `/` -> página principal (portfólio)
+- `/news` -> notícias de tecnologia
+- `*` -> página de não encontrado (404)
 
-Siga os passos abaixo para rodar o projeto em sua própria máquina:
+## APIs Serverless (`api/`)
 
-### 1. Pré-requisitos
-*   [Node.js](https://nodejs.org/) (versão 18+ recomendada)
-*   NPM, Yarn ou PNPM instalados.
+- `GET /api/tech-news`
+  : retorna notícias de tecnologia com cache em memória + cabeçalhos de cache
+  : query params suportados: `lang` (`pt` ou `en`) e `period` (`1d` ou `7d`)
 
-### 2. Passo a Passo
+- `GET /api/daily-verse`
+  : retorna versículo diário determinístico por dia (UTC)
+
+- `GET /api/bible-passage?ref=<referencia>`
+  : retorna passagem bíblica pela referência informada (ex.: `?ref=joao+3`)
+
+## Scripts Disponíveis
 
 ```bash
-# Clone este repositório
+npm run dev         # inicia ambiente de desenvolvimento (porta 8080)
+npm run build       # build de produção
+npm run build:dev   # build em modo development
+npm run preview     # preview local do build
+npm run lint        # lint com ESLint
+npm run test        # executa testes unitários (vitest run)
+npm run test:watch  # executa testes em watch mode
+```
+
+## Como Executar Localmente
+
+### Pré-requisitos
+
+- Node.js 18+ (recomendado)
+- npm (ou outro gerenciador compatível)
+
+### Passo a passo
+
+```bash
 git clone https://github.com/SEU_USUARIO/matheus-reis-fullstack-vision.git
-
-# Acesse o diretório do projeto
 cd matheus-reis-fullstack-vision
-
-# Instale as dependências
 npm install
-
-# Inicie o servidor de desenvolvimento
 npm run dev
 ```
 
-Abra [http://localhost:8080](http://localhost:8080) (ou a porta informada pelo Vite no terminal) no seu navegador para ver o resultado.
+A aplicação ficará disponível em `http://localhost:8080`.
 
-## 📁 Estrutura de Diretórios Principal
+## Estrutura Atual do Projeto
 
 ```plaintext
-src/
-├── components/         # Componentes React reutilizáveis (About, HardSkills, Navbar, etc.)
-├── components/ui/      # Componentes baseados na biblioteca shadcn/ui
-├── pages/              # Páginas de roteamento (Index.tsx, NotFound.tsx)
-├── App.tsx             # Arquivo principal do React e configuração de Rotas
-└── index.css           # Estilos globais Tailwind e diretivas customizadas (.section-glow)
+.
+├── api/                     # Funções serverless (Vercel)
+│   ├── bible-passage.ts
+│   ├── daily-verse.ts
+│   └── tech-news.ts
+├── public/
+├── src/
+│   ├── components/          # Seções e componentes reutilizáveis
+│   │   └── ui/              # Biblioteca de componentes base (shadcn/ui)
+│   ├── data/
+│   ├── hooks/
+│   ├── i18n/
+│   │   ├── config.ts
+│   │   └── locales/
+│   │       ├── en-US.json
+│   │       └── pt-BR.json
+│   ├── lib/
+│   ├── pages/
+│   │   ├── Index.tsx
+│   │   ├── News.tsx
+│   │   └── NotFound.tsx
+│   ├── test/
+│   ├── App.tsx
+│   └── main.tsx
+├── playwright.config.ts
+├── vitest.config.ts
+├── vite.config.ts
+└── vercel.json
 ```
 
-## 📫 Contato
+## Qualidade e Boas Práticas
 
-*   **LinkedIn:** [Matheus Reis Mendonça](https://www.linkedin.com/in/matheus-reis-584098306)
-*   **E-mail:** [matheusreismendonca1@gmail.com](mailto:matheusreismendonca1@gmail.com)
-*   **WhatsApp:** [+55 67 9 9143-1860](https://wa.me/5567991431860)
+- Tipagem forte com TypeScript
+- Componentização e organização por domínio
+- Internacionalização com fallback automático
+- Cache em endpoints serverless
+- Testes unitários e setup para testes E2E
+
+## Contato
+
+- LinkedIn: [Matheus Reis Mendonça](https://www.linkedin.com/in/matheus-reis-584098306)
+- E-mail: [matheusreismendonca1@gmail.com](mailto:matheusreismendonca1@gmail.com)
+- WhatsApp: [+55 67 9 9143-1860](https://wa.me/5567991431860)
