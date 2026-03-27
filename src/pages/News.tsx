@@ -88,14 +88,188 @@ const CATEGORY_KEYWORDS: Record<CategoryFilter, string[]> = {
   ],
 };
 
+const NEWSDATA_API_KEY = "pub_824d888f4b7f43a6972d48b4a04ad446";
+
+interface NewsDataResult {
+  article_id: string;
+  title: string;
+  description: string | null;
+  link: string;
+  image_url: string | null;
+  pubDate: string;
+  source_name: string;
+  source_url: string;
+  category: string[];
+  keywords: string[] | null;
+}
+
+// Termos que confirmam que o artigo é realmente sobre tecnologia
+const TECH_TERMS = [
+  "tecnologia",
+  "technology",
+  "software",
+  "hardware",
+  "app",
+  "aplicativo",
+  "inteligência artificial",
+  "ia",
+  "ai",
+  "machine learning",
+  "deep learning",
+  "programação",
+  "programming",
+  "developer",
+  "desenvolvedor",
+  "código",
+  "code",
+  "startup",
+  "fintech",
+  "blockchain",
+  "crypto",
+  "criptomoeda",
+  "bitcoin",
+  "smartphone",
+  "iphone",
+  "android",
+  "samsung",
+  "apple",
+  "google",
+  "microsoft",
+  "meta",
+  "openai",
+  "chatgpt",
+  "gpt",
+  "llm",
+  "nvidia",
+  "chip",
+  "processador",
+  "computador",
+  "pc",
+  "notebook",
+  "tablet",
+  "gadget",
+  "wearable",
+  "internet",
+  "rede",
+  "5g",
+  "cloud",
+  "nuvem",
+  "servidor",
+  "server",
+  "dados",
+  "data",
+  "cibersegurança",
+  "cybersecurity",
+  "hacker",
+  "segurança digital",
+  "robô",
+  "robot",
+  "automação",
+  "automation",
+  "iot",
+  "api",
+  "web",
+  "linux",
+  "windows",
+  "python",
+  "javascript",
+  "react",
+  "angular",
+  ".net",
+  "github",
+  "gitlab",
+  "aws",
+  "azure",
+  "docker",
+  "kubernetes",
+  "realidade virtual",
+  "vr",
+  "ar",
+  "realidade aumentada",
+  "metaverso",
+  "digital",
+  "tech",
+  "inovação",
+  "innovation",
+  "algoritmo",
+  "algorithm",
+  "banco de dados",
+  "database",
+  "tesla",
+  "spacex",
+  "elon musk",
+  "semiconductor",
+  "semicondutor",
+  "pixel",
+  "gaming",
+  "game",
+];
+
+const isTechRelated = (article: NewsDataResult): boolean => {
+  const text =
+    `${article.title} ${article.description || ""} ${(article.keywords || []).join(" ")}`.toLowerCase();
+  return TECH_TERMS.some((term) => text.includes(term));
+};
+
 const fetchNews = async (
   lang: string,
-  period: PeriodFilter,
+  _period: PeriodFilter,
 ): Promise<NewsResponse> => {
   const apiLang = lang.startsWith("pt") ? "pt" : "en";
-  const res = await fetch(`/api/tech-news?lang=${apiLang}&period=${period}`);
+
+  const url = new URL("https://newsdata.io/api/1/latest");
+  url.searchParams.set("apikey", NEWSDATA_API_KEY);
+  url.searchParams.set("category", "technology");
+  url.searchParams.set("language", apiLang);
+  url.searchParams.set("size", "10");
+  // Busca forçada por termos tech para evitar artigos irrelevantes
+  url.searchParams.set(
+    "q",
+    apiLang === "pt"
+      ? "tecnologia OR software OR inteligência artificial OR programação OR startup OR smartphone OR inovação"
+      : "technology OR software OR AI OR programming OR startup OR smartphone OR innovation",
+  );
+
+  if (apiLang === "pt") {
+    url.searchParams.set("country", "br");
+  }
+
+  let res = await fetch(url.toString());
+
+  // Fallback: se PT falhar, tenta EN
+  if (!res.ok && apiLang === "pt") {
+    url.searchParams.set("language", "en");
+    url.searchParams.delete("country");
+    url.searchParams.set(
+      "q",
+      "technology OR software OR AI OR programming OR startup OR smartphone OR innovation",
+    );
+    res = await fetch(url.toString());
+  }
+
   if (!res.ok) throw new Error("Erro ao buscar notícias");
-  return res.json();
+
+  const data = await res.json();
+  const results: NewsDataResult[] = data.results || [];
+
+  // Filtro local adicional para garantir relevância
+  const techArticles = results.filter((a) => a.title && isTechRelated(a));
+
+  return {
+    totalArticles: techArticles.length,
+    articles: techArticles.map((a) => ({
+      title: a.title,
+      description: a.description || "",
+      url: a.link,
+      image: a.image_url || null,
+      publishedAt: a.pubDate,
+      tags: [...(a.category || []), ...(a.keywords || [])],
+      source: {
+        name: a.source_name || "News",
+        url: a.source_url || "",
+      },
+    })),
+  };
 };
 
 const formatDate = (dateStr: string, lang: string) => {

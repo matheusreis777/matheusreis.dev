@@ -45,13 +45,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (lang === "pt") {
             url.searchParams.set("language", "pt");
             url.searchParams.set("country", "br");
+            url.searchParams.set("q", "tecnologia OR software OR inteligência artificial OR programação OR startup OR smartphone OR inovação");
         } else {
             url.searchParams.set("language", "en");
+            url.searchParams.set("q", "technology OR software OR AI OR programming OR startup OR smartphone OR innovation");
         }
 
         // Filtra por período
         if (period === "1d") {
-            const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
             url.searchParams.set("timeframe", "24");
         }
 
