@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -7,13 +7,8 @@ import {
   ExternalLink,
   RefreshCw,
   Clock,
-  Calendar,
   Newspaper,
   AlertCircle,
-  Cpu,
-  Code,
-  Smartphone,
-  Rocket,
 } from "lucide-react";
 
 interface Article {
@@ -22,7 +17,6 @@ interface Article {
   url: string;
   image: string | null;
   publishedAt: string;
-  tags: string[];
   source: {
     name: string;
     url: string;
@@ -33,60 +27,6 @@ interface NewsResponse {
   totalArticles: number;
   articles: Article[];
 }
-
-type PeriodFilter = "7d" | "1d";
-type CategoryFilter = "all" | "ai" | "programming" | "gadgets" | "startups";
-
-const CATEGORY_KEYWORDS: Record<CategoryFilter, string[]> = {
-  all: [],
-  ai: [
-    "inteligência artificial",
-    "ia",
-    "ai",
-    "machine learning",
-    "chatgpt",
-    "openai",
-    "gpt",
-    "llm",
-    "deep learning",
-    "neural",
-  ],
-  programming: [
-    "programação",
-    "programming",
-    "developer",
-    "código",
-    "code",
-    "software",
-    "github",
-    "javascript",
-    "python",
-    "react",
-    "api",
-  ],
-  gadgets: [
-    "gadget",
-    "smartphone",
-    "iphone",
-    "samsung",
-    "apple",
-    "google pixel",
-    "hardware",
-    "dispositivo",
-    "device",
-    "wearable",
-  ],
-  startups: [
-    "startup",
-    "venture",
-    "funding",
-    "investimento",
-    "unicórnio",
-    "unicorn",
-    "fintech",
-    "valuation",
-  ],
-};
 
 const NEWSDATA_API_KEY = "pub_824d888f4b7f43a6972d48b4a04ad446";
 
@@ -211,10 +151,7 @@ const isTechRelated = (article: NewsDataResult): boolean => {
   return TECH_TERMS.some((term) => text.includes(term));
 };
 
-const fetchNews = async (
-  lang: string,
-  _period: PeriodFilter,
-): Promise<NewsResponse> => {
+const fetchNews = async (lang: string): Promise<NewsResponse> => {
   const apiLang = lang.startsWith("pt") ? "pt" : "en";
 
   const url = new URL("https://newsdata.io/api/1/latest");
@@ -222,27 +159,22 @@ const fetchNews = async (
   url.searchParams.set("category", "technology");
   url.searchParams.set("language", apiLang);
   url.searchParams.set("size", "10");
-  // Busca forçada por termos tech para evitar artigos irrelevantes
+  // Query curta (max 100 chars) para forçar relevância tech
   url.searchParams.set(
     "q",
     apiLang === "pt"
-      ? "tecnologia OR software OR inteligência artificial OR programação OR startup OR smartphone OR inovação"
-      : "technology OR software OR AI OR programming OR startup OR smartphone OR innovation",
+      ? "tecnologia OR software OR inteligência artificial OR startup"
+      : "technology OR software OR AI OR programming OR startup",
   );
-
-  if (apiLang === "pt") {
-    url.searchParams.set("country", "br");
-  }
 
   let res = await fetch(url.toString());
 
-  // Fallback: se PT falhar, tenta EN
+  // Fallback: se PT falhar ou retornar vazio, tenta EN
   if (!res.ok && apiLang === "pt") {
     url.searchParams.set("language", "en");
-    url.searchParams.delete("country");
     url.searchParams.set(
       "q",
-      "technology OR software OR AI OR programming OR startup OR smartphone OR innovation",
+      "technology OR software OR AI OR programming OR startup",
     );
     res = await fetch(url.toString());
   }
@@ -263,7 +195,6 @@ const fetchNews = async (
       url: a.link,
       image: a.image_url || null,
       publishedAt: a.pubDate,
-      tags: [...(a.category || []), ...(a.keywords || [])],
       source: {
         name: a.source_name || "News",
         url: a.source_url || "",
@@ -392,13 +323,10 @@ const News = () => {
   const { t, i18n } = useTranslation();
   const lang = i18n.language;
 
-  const [period, setPeriod] = useState<PeriodFilter>("7d");
-  const [category, setCategory] = useState<CategoryFilter>("all");
-
   const { data, isLoading, isError, refetch, isFetching } =
     useQuery<NewsResponse>({
-      queryKey: ["tech-news", lang, period],
-      queryFn: () => fetchNews(lang, period),
+      queryKey: ["tech-news", lang],
+      queryFn: () => fetchNews(lang),
       staleTime: 5 * 60 * 1000,
       refetchOnWindowFocus: false,
     });
@@ -407,38 +335,9 @@ const News = () => {
     refetch();
   }, [refetch]);
 
-  // Filtra por categoria localmente (usa tags do Dev.to + keywords no texto)
-  const filteredArticles = (data?.articles ?? []).filter((a) => {
-    if (category === "all") return true;
-    const keywords = CATEGORY_KEYWORDS[category];
-    const text =
-      `${a.title} ${a.description ?? ""} ${(a.tags ?? []).join(" ")}`.toLowerCase();
-    return keywords.some((kw) => text.includes(kw));
-  });
-
-  const featured = filteredArticles[0];
-  const rest = filteredArticles.slice(1);
-
-  const periodOptions: {
-    value: PeriodFilter;
-    labelKey: string;
-    icon: typeof Clock;
-  }[] = [
-    { value: "7d", labelKey: "news.filter_week", icon: Calendar },
-    { value: "1d", labelKey: "news.filter_today", icon: Clock },
-  ];
-
-  const categoryOptions: {
-    value: CategoryFilter;
-    labelKey: string;
-    icon: typeof Cpu;
-  }[] = [
-    { value: "all", labelKey: "news.cat_all", icon: Newspaper },
-    { value: "ai", labelKey: "news.cat_ai", icon: Cpu },
-    { value: "programming", labelKey: "news.cat_programming", icon: Code },
-    { value: "gadgets", labelKey: "news.cat_gadgets", icon: Smartphone },
-    { value: "startups", labelKey: "news.cat_startups", icon: Rocket },
-  ];
+  const articles = data?.articles ?? [];
+  const featured = articles[0];
+  const rest = articles.slice(1);
 
   return (
     <div className="min-h-screen bg-background">
@@ -460,7 +359,7 @@ const News = () => {
 
       <main className="container mx-auto px-6 md:px-12 lg:px-24 py-12">
         {/* Título + Refresh */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10">
           <div>
             <h1 className="font-heading text-3xl md:text-4xl font-bold text-foreground">
               {t("news.title")}
@@ -477,51 +376,6 @@ const News = () => {
             <RefreshCw size={14} className={isFetching ? "animate-spin" : ""} />
             {t("news.refresh")}
           </button>
-        </div>
-
-        {/* Filtros */}
-        <div className="flex flex-wrap gap-3 mb-8">
-          {/* Período */}
-          <div className="flex items-center gap-1 p-1 rounded-full bg-muted/40 border border-border">
-            {periodOptions.map((opt) => {
-              const Icon = opt.icon;
-              return (
-                <button
-                  key={opt.value}
-                  onClick={() => setPeriod(opt.value)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-body transition-all ${
-                    period === opt.value
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <Icon size={12} />
-                  {t(opt.labelKey)}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Categoria */}
-          <div className="flex items-center gap-1 p-1 rounded-full bg-muted/40 border border-border overflow-x-auto">
-            {categoryOptions.map((opt) => {
-              const Icon = opt.icon;
-              return (
-                <button
-                  key={opt.value}
-                  onClick={() => setCategory(opt.value)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-body whitespace-nowrap transition-all ${
-                    category === opt.value
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <Icon size={12} />
-                  {t(opt.labelKey)}
-                </button>
-              );
-            })}
-          </div>
         </div>
 
         {/* Loading */}
@@ -556,7 +410,7 @@ const News = () => {
         )}
 
         {/* Sem resultados */}
-        {!isLoading && !isError && filteredArticles.length === 0 && (
+        {!isLoading && !isError && articles.length === 0 && (
           <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
             <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
               <Newspaper size={28} className="text-muted-foreground" />
@@ -571,7 +425,7 @@ const News = () => {
         )}
 
         {/* Notícias */}
-        {!isLoading && !isError && filteredArticles.length > 0 && (
+        {!isLoading && !isError && articles.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {featured && <NewsCard article={featured} featured lang={lang} />}
             {rest.map((article, i) => (

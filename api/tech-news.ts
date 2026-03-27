@@ -44,11 +44,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         if (lang === "pt") {
             url.searchParams.set("language", "pt");
-            url.searchParams.set("country", "br");
-            url.searchParams.set("q", "tecnologia OR software OR inteligência artificial OR programação OR startup OR smartphone OR inovação");
+            url.searchParams.set("q", "tecnologia OR software OR inteligência artificial OR startup");
         } else {
             url.searchParams.set("language", "en");
-            url.searchParams.set("q", "technology OR software OR AI OR programming OR startup OR smartphone OR innovation");
+            url.searchParams.set("q", "technology OR software OR AI OR programming OR startup");
         }
 
         // Filtra por período
