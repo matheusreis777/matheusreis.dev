@@ -146,6 +146,9 @@
         },
         "bible": {
           "desc": "Leitura completa da Bíblia em português (Almeida), com todos os 66 livros, navegação por capítulos, busca de livros e versículo diário integrado ao site."
+        },
+        "crochetando": {
+          "desc": "O Crochetando incentiva você a se desconectar das telas, aprender crochê no seu ritmo e encontrar prazer em criar algo único com as próprias mãos."
         }
       }
     },

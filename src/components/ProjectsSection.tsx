@@ -1,4 +1,12 @@
-import { ExternalLink, Code2, Globe, Smartphone, LayoutGrid, BookOpen } from "lucide-react";
+import {
+  ExternalLink,
+  Code2,
+  Globe,
+  Smartphone,
+  LayoutGrid,
+  BookOpen,
+  Heart,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -43,10 +51,20 @@ const ProjectsSection = () => {
       link: "https://biblia.matheusreis.dev/",
       icon: BookOpen,
     },
+    {
+      title: "Crochetando",
+      description: t("projects.items.crochetando.desc"),
+      tech: ["React", "TypeScript", "Tailwind CSS", "Vite"],
+      link: "https://crochetanto.matheusreis.dev/",
+      icon: Heart,
+    },
   ];
 
   return (
-    <section id="projetos" className="min-h-screen flex items-center section-glow py-24 mb-12">
+    <section
+      id="projetos"
+      className="min-h-screen flex items-center section-glow py-24 mb-12"
+    >
       <div className="container mx-auto px-6 md:px-12 lg:px-24 relative z-10">
         <div className="mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <h2 className="font-heading text-3xl md:text-4xl font-medium text-foreground flex items-center gap-3">
@@ -75,7 +93,7 @@ const ProjectsSection = () => {
                       {project.status}
                     </span>
                   )}
-                  {'path' in project ? (
+                  {"path" in project ? (
                     <Link
                       to={project.path as string}
                       className="p-2 rounded-full hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
@@ -83,28 +101,30 @@ const ProjectsSection = () => {
                     >
                       <ExternalLink size={20} />
                     </Link>
-                  ) : project.link !== "#" && (
-                    <a
-                      href={project.link as string}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 rounded-full hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
-                      aria-label={`Ver projeto ${project.title}`}
-                    >
-                      <ExternalLink size={20} />
-                    </a>
+                  ) : (
+                    project.link !== "#" && (
+                      <a
+                        href={project.link as string}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-full hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+                        aria-label={`Ver projeto ${project.title}`}
+                      >
+                        <ExternalLink size={20} />
+                      </a>
+                    )
                   )}
                 </div>
               </div>
-              
+
               <h3 className="font-heading text-xl font-medium text-foreground mb-3 group-hover:text-primary transition-colors">
                 {project.title}
               </h3>
-              
+
               <p className="font-body text-muted-foreground mb-8 line-clamp-3">
                 {project.description}
               </p>
-              
+
               <div className="mt-auto flex flex-wrap gap-2">
                 {project.tech.map((t) => (
                   <span

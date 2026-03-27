@@ -146,6 +146,9 @@
         },
         "bible": {
           "desc": "Full Bible reading in Portuguese (Almeida), with all 66 books, chapter navigation, book search and daily verse integrated into the site."
+        },
+        "crochetando": {
+          "desc": "Crochetando encourages you to disconnect from screens, learn crochet at your own pace and find pleasure in creating something unique with your own hands."
         }
       }
     },
