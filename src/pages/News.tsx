@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -9,6 +9,7 @@ import {
   Clock,
   Newspaper,
   AlertCircle,
+  ChevronDown,
 } from "lucide-react";
 
 interface Article {
@@ -26,6 +27,7 @@ interface Article {
 interface NewsResponse {
   totalArticles: number;
   articles: Article[];
+  nextPage: string | null;
 }
 
 const NEWSDATA_API_KEY = "pub_824d888f4b7f43a6972d48b4a04ad446";
@@ -151,7 +153,10 @@ const isTechRelated = (article: NewsDataResult): boolean => {
   return TECH_TERMS.some((term) => text.includes(term));
 };
 
-const fetchNews = async (lang: string): Promise<NewsResponse> => {
+const fetchNews = async (
+  lang: string,
+  cursor?: string,
+): Promise<NewsResponse> => {
   const apiLang = lang.startsWith("pt") ? "pt" : "en";
 
   const url = new URL("https://newsdata.io/api/1/latest");
@@ -159,17 +164,16 @@ const fetchNews = async (lang: string): Promise<NewsResponse> => {
   url.searchParams.set("category", "technology");
   url.searchParams.set("language", apiLang);
   url.searchParams.set("size", "10");
-  // Query curta (max 100 chars) para forçar relevância tech
   url.searchParams.set(
     "q",
     apiLang === "pt"
       ? "tecnologia OR software OR inteligência artificial OR startup"
       : "technology OR software OR AI OR programming OR startup",
   );
+  if (cursor) url.searchParams.set("page", cursor);
 
   let res = await fetch(url.toString());
 
-  // Fallback: se PT falhar ou retornar vazio, tenta EN
   if (!res.ok && apiLang === "pt") {
     url.searchParams.set("language", "en");
     url.searchParams.set(
@@ -183,12 +187,11 @@ const fetchNews = async (lang: string): Promise<NewsResponse> => {
 
   const data = await res.json();
   const results: NewsDataResult[] = data.results || [];
-
-  // Filtro local adicional para garantir relevância
   const techArticles = results.filter((a) => a.title && isTechRelated(a));
 
   return {
     totalArticles: techArticles.length,
+    nextPage: data.nextPage ?? null,
     articles: techArticles.map((a) => ({
       title: a.title,
       description: a.description || "",
@@ -323,6 +326,10 @@ const News = () => {
   const { t, i18n } = useTranslation();
   const lang = i18n.language;
 
+  const [allArticles, setAllArticles] = useState<Article[]>([]);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
   const { data, isLoading, isError, refetch, isFetching } =
     useQuery<NewsResponse>({
       queryKey: ["tech-news", lang],
@@ -331,11 +338,32 @@ const News = () => {
       refetchOnWindowFocus: false,
     });
 
+  useEffect(() => {
+    if (data) {
+      setAllArticles(data.articles);
+      setNextCursor(data.nextPage);
+    }
+  }, [data]);
+
   const handleRefresh = useCallback(() => {
+    setAllArticles([]);
+    setNextCursor(null);
     refetch();
   }, [refetch]);
 
-  const articles = data?.articles ?? [];
+  const handleLoadMore = useCallback(async () => {
+    if (!nextCursor || isLoadingMore) return;
+    setIsLoadingMore(true);
+    try {
+      const res = await fetchNews(lang, nextCursor);
+      setAllArticles((prev) => [...prev, ...res.articles]);
+      setNextCursor(res.nextPage);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [nextCursor, isLoadingMore, lang]);
+
+  const articles = allArticles;
   const featured = articles[0];
   const rest = articles.slice(1);
 
@@ -435,6 +463,32 @@ const News = () => {
                 lang={lang}
               />
             ))}
+          </div>
+        )}
+
+        {/* Carregar mais */}
+        {!isLoading && !isError && articles.length > 0 && (
+          <div className="flex justify-center mt-10">
+            {nextCursor ? (
+              <button
+                onClick={handleLoadMore}
+                disabled={isLoadingMore}
+                className="flex items-center gap-2 px-6 py-3 rounded-full border border-border hover:border-primary/40 hover:bg-primary/5 text-sm text-muted-foreground hover:text-primary transition-all disabled:opacity-50 font-body"
+              >
+                {isLoadingMore ? (
+                  <RefreshCw size={15} className="animate-spin" />
+                ) : (
+                  <ChevronDown size={15} />
+                )}
+                {lang.startsWith("pt") ? "Carregar mais" : "Load more"}
+              </button>
+            ) : (
+              <p className="text-xs text-muted-foreground font-body">
+                {lang.startsWith("pt")
+                  ? "Todas as notícias carregadas"
+                  : "All news loaded"}
+              </p>
+            )}
           </div>
         )}
       </main>
