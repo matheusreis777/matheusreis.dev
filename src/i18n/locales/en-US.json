@@ -162,7 +162,8 @@
       "soft_skills": "Soft Skills",
       "experience": "Experience",
       "projects": "Projects",
-      "contact": "Contact"
+      "contact": "Contact",
+      "news": "News"
     },
     "hero": {
       "title_first": "Matheus Reis",
@@ -201,6 +202,25 @@
       "role": "Fullstack Developer",
       "bible": "Daily Bible",
       "rights": "All rights reserved"
+    },
+    "news": {
+      "title": "Tech News",
+      "subtitle": "The latest from the tech world, updated in real time.",
+      "back_to_site": "Back to site",
+      "refresh": "Refresh",
+      "filter_today": "Today",
+      "filter_week": "Week",
+      "cat_all": "All",
+      "cat_ai": "AI",
+      "cat_programming": "Programming",
+      "cat_gadgets": "Gadgets",
+      "cat_startups": "Startups",
+      "error_title": "Oops! Something went wrong",
+      "error_desc": "Could not load the news. Check your connection and try again.",
+      "retry": "Try again",
+      "empty_title": "No news found",
+      "empty_desc": "We couldn't find news for the selected filter. Try changing the filters.",
+      "powered_by": "Sources: newsdata.io · Updated in real time"
     }
   }
 }
