@@ -175,6 +175,61 @@ function deduplicateArticles(articles: Article[]): Article[] {
     });
 }
 
+// ─── Tradução (Google Translate free endpoint) ───────────────
+const TRANSLATE_SEPARATOR = " ||| ";
+
+async function translateBatch(texts: string[], targetLang: string): Promise<string[]> {
+    if (texts.length === 0) return [];
+
+    // Junta tudo com separador para traduzir numa única chamada
+    const joined = texts.join(TRANSLATE_SEPARATOR);
+
+    try {
+        const url = new URL("https://translate.googleapis.com/translate_a/single");
+        url.searchParams.set("client", "gtx");
+        url.searchParams.set("sl", "auto");
+        url.searchParams.set("tl", targetLang);
+        url.searchParams.set("dt", "t");
+        url.searchParams.set("q", joined);
+
+        const res = await fetch(url.toString());
+        if (!res.ok) return texts; // fallback: retorna originais
+
+        const data = await res.json();
+        // Resposta: [[["texto traduzido","texto original",null,null,10],...],null,"en",...]
+        const translated = (data[0] as Array<[string]>)
+            .map((segment: [string]) => segment[0])
+            .join("");
+
+        const parts = translated.split(/\s*\|\|\|\s*/);
+
+        // Se a quantidade de partes bater, retorna; senão fallback
+        if (parts.length === texts.length) return parts;
+
+        return texts; // fallback seguro
+    } catch {
+        return texts; // fallback: retorna originais
+    }
+}
+
+async function translateArticles(articles: Article[], targetLang: string): Promise<Article[]> {
+    if (articles.length === 0) return [];
+
+    const titles = articles.map((a) => a.title);
+    const descriptions = articles.map((a) => a.description || "");
+
+    const [translatedTitles, translatedDescs] = await Promise.all([
+        translateBatch(titles, targetLang),
+        translateBatch(descriptions, targetLang),
+    ]);
+
+    return articles.map((a, i) => ({
+        ...a,
+        title: translatedTitles[i] || a.title,
+        description: translatedDescs[i] || a.description,
+    }));
+}
+
 // ─── Handler ─────────────────────────────────────────────────
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -194,7 +249,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         try {
             const nd = await fetchNewsData(lang, cursor);
-            const result = { totalArticles: nd.articles.length, articles: nd.articles, nextPage: nd.nextPage };
+            let articles = nd.articles;
+            if (lang.startsWith("pt")) {
+                articles = await translateArticles(articles, "pt");
+            }
+            const result = { totalArticles: articles.length, articles, nextPage: nd.nextPage };
             cache[cacheKey] = { data: result, timestamp: Date.now() };
             return res.status(200).json(result);
         } catch (err) {
@@ -236,8 +295,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         // Mescla, deduplica e ordena por data
-        const merged = deduplicateArticles([...ndArticles, ...gnArticles, ...crArticles])
+        let merged = deduplicateArticles([...ndArticles, ...gnArticles, ...crArticles])
             .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+
+        // Traduz para português se necessário
+        if (lang.startsWith("pt")) {
+            merged = await translateArticles(merged, "pt");
+        }
 
         const result = {
             totalArticles: merged.length,
