@@ -10,6 +10,7 @@ import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 const News = lazy(() => import("./pages/News.tsx"));
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
+import MouseGlow from "./components/MouseGlow";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <MouseGlow />
         <FloatingWhatsApp />
         <Routes>
           <Route path="/" element={<Index />} />

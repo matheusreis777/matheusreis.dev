@@ -128,5 +128,20 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+
+  .data-flow-divider svg animate {
+    animation: none !important;
+  }
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
