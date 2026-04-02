@@ -1,14 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { Mail, Linkedin, BookOpen, Copy, Download, Share2 } from "lucide-react";
 import { toast } from "sonner";
-import { toPng } from "html-to-image";
 import ParticleNetwork from "./ParticleNetwork";
 import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
 import { useTranslation, Trans } from "react-i18next";
 
 const HeroSection = () => {
   const { t } = useTranslation();
-  const [dailyVerse, setDailyVerse] = useState<{ text: string; reference: string } | null>(null);
+  const [dailyVerse, setDailyVerse] = useState<{
+    text: string;
+    reference: string;
+  } | null>(null);
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const storyRef = useRef<HTMLDivElement>(null);
@@ -16,6 +18,7 @@ const HeroSection = () => {
   const generatePngBlob = async (): Promise<Blob | null> => {
     if (!storyRef.current) return null;
     try {
+      const { toPng } = await import("html-to-image");
       const { width, height } = storyRef.current.getBoundingClientRect();
       const dataUrl = await toPng(storyRef.current, {
         pixelRatio: 2,
@@ -42,7 +45,10 @@ const HeroSection = () => {
     setIsGenerating(true);
     const blob = await generatePngBlob();
     setIsGenerating(false);
-    if (!blob) { toast.error(t("hero.generate_error")); return; }
+    if (!blob) {
+      toast.error(t("hero.generate_error"));
+      return;
+    }
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -57,8 +63,15 @@ const HeroSection = () => {
     setIsGenerating(true);
     const blob = await generatePngBlob();
     setIsGenerating(false);
-    if (!blob) { toast.error(t("hero.generate_error")); return; }
-    const file = new File([blob], `verse-${dailyVerse.reference.replace(/\s/g, "-")}.png`, { type: "image/png" });
+    if (!blob) {
+      toast.error(t("hero.generate_error"));
+      return;
+    }
+    const file = new File(
+      [blob],
+      `verse-${dailyVerse.reference.replace(/\s/g, "-")}.png`,
+      { type: "image/png" },
+    );
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({
@@ -67,7 +80,8 @@ const HeroSection = () => {
           files: [file],
         });
       } catch (e: unknown) {
-        if (e instanceof Error && e.name !== "AbortError") toast.error(t("hero.share_error"));
+        if (e instanceof Error && e.name !== "AbortError")
+          toast.error(t("hero.share_error"));
       }
     } else {
       toast.error(t("hero.browser_not_support_share"));
@@ -92,7 +106,10 @@ const HeroSection = () => {
           const data = await response.json();
           const verse = { text: data.text, reference: data.reference };
           setDailyVerse(verse);
-          localStorage.setItem("dailyVerse", JSON.stringify({ date: today, verse }));
+          localStorage.setItem(
+            "dailyVerse",
+            JSON.stringify({ date: today, verse }),
+          );
         }
       } catch (error) {
         console.error("Error fetching daily verse:", error);
@@ -117,20 +134,33 @@ const HeroSection = () => {
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground font-body leading-relaxed mb-4 max-w-2xl text-justify animate-fade-up stagger-2">
             <Trans i18nKey="hero.description_1">
-              Desenvolvedor Fullstack com especialização em backend utilizando <span className="text-foreground">.NET</span> e a linguagem <span className="text-foreground">C#</span>, com sólida experiência no desenvolvimento de <span className="text-foreground">APIs REST</span> escaláveis, integrações entre sistemas e aplicações corporativas.
+              Desenvolvedor Fullstack com especialização em backend utilizando{" "}
+              <span className="text-foreground">.NET</span> e a linguagem{" "}
+              <span className="text-foreground">C#</span>, com sólida
+              experiência no desenvolvimento de{" "}
+              <span className="text-foreground">APIs REST</span> escaláveis,
+              integrações entre sistemas e aplicações corporativas.
             </Trans>
           </p>
           <p className="text-base text-muted-foreground font-body leading-relaxed mb-8 max-w-2xl text-justify animate-fade-up stagger-3">
             <Trans i18nKey="hero.description_2">
-              Atuo na construção de soluções completas, desde a modelagem e otimização de banco de dados até o desenvolvimento de interfaces modernas com <span className="text-foreground">Angular</span>, <span className="text-foreground">JavaScript</span> e aplicações mobile com <span className="text-foreground">React Native</span>, sempre com foco em performance, escalabilidade e qualidade de código.
+              Atuo na construção de soluções completas, desde a modelagem e
+              otimização de banco de dados até o desenvolvimento de interfaces
+              modernas com <span className="text-foreground">Angular</span>,{" "}
+              <span className="text-foreground">JavaScript</span> e aplicações
+              mobile com <span className="text-foreground">React Native</span>,
+              sempre com foco em performance, escalabilidade e qualidade de
+              código.
             </Trans>
           </p>
-          
+
           {dailyVerse && (
             <>
-              <div 
+              <div
                 onClick={() => {
-                  navigator.clipboard.writeText(`"${dailyVerse.text}" - ${dailyVerse.reference}`);
+                  navigator.clipboard.writeText(
+                    `"${dailyVerse.text}" - ${dailyVerse.reference}`,
+                  );
                   toast.success(t("hero.verse_copy"));
                   setIsStoryModalOpen(true);
                 }}
@@ -140,8 +170,14 @@ const HeroSection = () => {
                 <div className="absolute top-0 left-0 w-1 h-full bg-primary/50 group-hover:bg-primary transition-colors"></div>
                 <div className="flex items-start gap-3 relative">
                   <div className="shrink-0 mt-1">
-                    <BookOpen className="text-primary/70 group-hover:opacity-0 transition-opacity absolute" size={18} />
-                    <Copy className="text-primary group-hover:opacity-100 opacity-0 transition-opacity" size={18} />
+                    <BookOpen
+                      className="text-primary/70 group-hover:opacity-0 transition-opacity absolute"
+                      size={18}
+                    />
+                    <Copy
+                      className="text-primary group-hover:opacity-100 opacity-0 transition-opacity"
+                      size={18}
+                    />
                   </div>
                   <div className="flex flex-col gap-2 w-full">
                     <p className="text-sm sm:text-base text-muted-foreground italic leading-relaxed font-body">
@@ -154,16 +190,23 @@ const HeroSection = () => {
                 </div>
               </div>
 
-              <Dialog open={isStoryModalOpen} onOpenChange={setIsStoryModalOpen}>
-                <DialogContent className="
+              <Dialog
+                open={isStoryModalOpen}
+                onOpenChange={setIsStoryModalOpen}
+              >
+                <DialogContent
+                  className="
                   p-0 border-none bg-transparent shadow-none gap-0
                   w-screen h-[100dvh] max-w-none
                   flex flex-col items-center justify-center
                   [&>button]:absolute [&>button]:top-4 [&>button]:right-4 [&>button]:z-50
                   [&>button]:text-white [&>button]:bg-black/40 [&>button]:hover:bg-black/60
                   [&>button]:p-2 [&>button]:rounded-full [&>button]:backdrop-blur-sm
-                ">
-                  <DialogTitle className="sr-only">{t("hero.story_title")}</DialogTitle>
+                "
+                >
+                  <DialogTitle className="sr-only">
+                    {t("hero.story_title")}
+                  </DialogTitle>
 
                   <div className="flex flex-col items-center gap-4 w-full px-4 max-w-xs sm:max-w-sm">
                     <div
@@ -178,7 +221,10 @@ const HeroSection = () => {
                     >
                       <div className="absolute top-0 right-0 w-48 h-48 bg-primary/25 rounded-full blur-3xl pointer-events-none" />
                       <div className="absolute bottom-10 left-0 w-48 h-48 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
-                      <BookOpen className="text-primary/50 mb-6 shrink-0 relative z-10" size={28} />
+                      <BookOpen
+                        className="text-primary/50 mb-6 shrink-0 relative z-10"
+                        size={28}
+                      />
                       <p className="text-base leading-relaxed text-white/90 italic font-body relative z-10">
                         "{dailyVerse.text}"
                       </p>
@@ -199,7 +245,9 @@ const HeroSection = () => {
                         className="flex-1 inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-4 py-3 rounded-xl text-sm font-heading font-medium transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-wait shadow-lg shadow-primary/30"
                       >
                         <Download size={15} />
-                        {isGenerating ? t("hero.btn_generating") : t("hero.btn_download")}
+                        {isGenerating
+                          ? t("hero.btn_generating")
+                          : t("hero.btn_download")}
                       </button>
                       {typeof navigator !== "undefined" && navigator.share && (
                         <button
@@ -208,7 +256,9 @@ const HeroSection = () => {
                           className="flex-1 inline-flex items-center justify-center gap-2 border border-white/20 text-white bg-white/10 backdrop-blur-sm px-4 py-3 rounded-xl text-sm font-heading font-medium transition-all hover:bg-white/20 active:scale-95 disabled:opacity-50 disabled:cursor-wait"
                         >
                           <Share2 size={15} />
-                          {isGenerating ? t("hero.btn_generating") : t("hero.btn_share")}
+                          {isGenerating
+                            ? t("hero.btn_generating")
+                            : t("hero.btn_share")}
                         </button>
                       )}
                     </div>

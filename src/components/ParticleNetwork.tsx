@@ -22,19 +22,22 @@ const ParticleNetwork = () => {
 
     let animationId: number;
     let particles: Particle[] = [];
-    const PARTICLE_COUNT = 55;
+    const isMobile = window.innerWidth < 768;
+    const PARTICLE_COUNT = isMobile ? 25 : 55;
     const CONNECTION_DIST_SQ = 150 * 150;
     const MOUSE_RADIUS_SQ = 180 * 180;
     const MOUSE_PUSH = 0.8;
     const PARTICLE_SPEED = 0.3;
-    const TARGET_FPS = 30;
+    const TARGET_FPS = isMobile ? 24 : 30;
     const FRAME_INTERVAL = 1000 / TARGET_FPS;
     let lastFrameTime = 0;
 
+    const DPR = isMobile ? 1 : window.devicePixelRatio;
+
     const resize = () => {
-      canvas.width = canvas.offsetWidth * window.devicePixelRatio;
-      canvas.height = canvas.offsetHeight * window.devicePixelRatio;
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      canvas.width = canvas.offsetWidth * DPR;
+      canvas.height = canvas.offsetHeight * DPR;
+      ctx.scale(DPR, DPR);
     };
 
     const initParticles = () => {
