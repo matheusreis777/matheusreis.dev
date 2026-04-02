@@ -9,6 +9,7 @@ import { lazy, Suspense } from "react";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 const News = lazy(() => import("./pages/News.tsx"));
+const Git = lazy(() => import("./pages/Git.tsx"));
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
 import MouseGlow from "./components/MouseGlow";
 
@@ -37,6 +38,20 @@ const App = () => (
                 }
               >
                 <News />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/git"
+            element={
+              <Suspense
+                fallback={
+                  <div className="min-h-screen flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full border-t-2 border-primary animate-spin" />
+                  </div>
+                }
+              >
+                <Git />
               </Suspense>
             }
           />

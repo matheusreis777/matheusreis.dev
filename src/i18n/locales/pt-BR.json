@@ -166,7 +166,8 @@
       "experience": "Experiência",
       "projects": "Projetos",
       "contact": "Contato",
-      "news": "Notícias"
+      "news": "Notícias",
+      "git": "GitHub"
     },
     "hero": {
       "title_first": "Matheus Reis",
@@ -205,6 +206,14 @@
       "role": "Desenvolvedor Fullstack",
       "bible": "Bíblia Online",
       "rights": "Todos os direitos reservados"
+    },
+    "github": {
+      "title": "Atividade recente no GitHub",
+      "subtitle": "Commits recentes nos meus repositórios, atualizados em tempo real.",
+      "view_repo": "Ver repositório",
+      "error": "Não foi possível carregar atividade do GitHub.",
+      "empty": "Nenhuma atividade recente encontrada.",
+      "back_to_site": "Voltar ao site"
     },
     "news": {
       "title": "Notícias de Tecnologia",

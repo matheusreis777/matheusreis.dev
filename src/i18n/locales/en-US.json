@@ -166,7 +166,8 @@
       "experience": "Experience",
       "projects": "Projects",
       "contact": "Contact",
-      "news": "News"
+      "news": "News",
+      "git": "GitHub"
     },
     "hero": {
       "title_first": "Matheus Reis",
@@ -205,6 +206,14 @@
       "role": "Fullstack Developer",
       "bible": "Daily Bible",
       "rights": "All rights reserved"
+    },
+    "github": {
+      "title": "Recent GitHub Activity",
+      "subtitle": "Recent commits across my repositories, updated in real time.",
+      "view_repo": "View repository",
+      "error": "Could not load GitHub activity.",
+      "empty": "No recent activity found.",
+      "back_to_site": "Back to site"
     },
     "news": {
       "title": "Tech News",

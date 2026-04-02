@@ -15,6 +15,7 @@ const Navbar = () => {
     { label: t("nav.projects"), href: "#projetos" },
     { label: t("nav.contact"), href: "#contato" },
     { label: t("nav.news"), href: "/news", isRoute: true },
+    { label: t("nav.git"), href: "/git", isRoute: true },
   ];
 
   const toggleLanguage = () => {
@@ -24,15 +25,15 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border font-heading">
-      <div className="container mx-auto px-6 md:px-12 lg:px-24 flex items-center justify-between h-16">
+      <div className="container mx-auto px-6 md:px-12 lg:px-24 flex items-center justify-center h-16">
         <a
           href="#"
-          className="font-heading text-sm font-medium text-foreground tracking-wide"
+          className="font-heading text-sm font-medium text-foreground tracking-wide absolute left-6 md:left-12 lg:left-24"
         >
           MRM<span className="text-primary">.</span>
         </a>
         {/* Desktop */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-6">
           {links.map((l) =>
             l.isRoute ? (
               <Link
@@ -54,7 +55,9 @@ const Navbar = () => {
               </a>
             ),
           )}
+        </div>
 
+        <div className="hidden md:flex items-center absolute right-6 md:right-12 lg:right-24">
           <button
             onClick={toggleLanguage}
             className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border hover:border-primary/40 hover:bg-primary/5 transition-all group"
