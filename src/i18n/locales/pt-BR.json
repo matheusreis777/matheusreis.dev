@@ -223,7 +223,17 @@
       "retry": "Tentar novamente",
       "empty_title": "Nenhuma notícia encontrada",
       "empty_desc": "Não encontramos notícias para o filtro selecionado. Tente alterar os filtros.",
-      "powered_by": "Fontes: newsdata.io · Atualizado em tempo real"
+      "powered_by": "Fontes: newsdata.io · Atualizado em tempo real",
+      "share_btn": "Compartilhar",
+      "share_title": "Compartilhar Notícia",
+      "share_link": "Compartilhar link",
+      "share_link_desc": "Envie o link da notícia ou copie para a área de transferência",
+      "share_story": "Gerar e compartilhar story",
+      "share_story_desc": "Cria uma imagem no formato story e compartilha",
+      "share_download": "Baixar story",
+      "share_download_desc": "Gera uma imagem no formato story para download",
+      "share_generating": "Gerando...",
+      "share_preview": "Pré-visualização do story"
     }
   }
 }

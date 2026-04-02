@@ -11,6 +11,7 @@ import {
   AlertCircle,
   ChevronDown,
 } from "lucide-react";
+import { NewsShareStory } from "@/components/NewsShareStory";
 
 interface Article {
   title: string;
@@ -284,6 +285,9 @@ const NewsCard = ({
       <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-primary/90 text-primary-foreground text-[10px] uppercase tracking-wider font-bold backdrop-blur-sm">
         {article.source.name}
       </span>
+      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+        <NewsShareStory article={article} lang={lang} />
+      </div>
     </div>
 
     {/* Conteúdo */}
