@@ -223,7 +223,7 @@
       "retry": "Try again",
       "empty_title": "No news found",
       "empty_desc": "We couldn't find news for the selected filter. Try changing the filters.",
-      "powered_by": "Sources: newsdata.io · Updated in real time",
+      "powered_by": "Sources: newsdata.io · GNews · Currents API · Updated in real time",
       "share_btn": "Share",
       "share_title": "Share News",
       "share_link": "Share link",
@@ -233,7 +233,9 @@
       "share_download": "Download story",
       "share_download_desc": "Generates a story-format image for download",
       "share_generating": "Generating...",
-      "share_preview": "Story preview"
+      "share_preview": "Story preview",
+      "share_tab_preview": "Preview",
+      "share_tab_actions": "Share"
     }
   }
 }

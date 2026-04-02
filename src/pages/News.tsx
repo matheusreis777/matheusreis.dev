@@ -31,179 +31,74 @@ interface NewsResponse {
   nextPage: string | null;
 }
 
-const NEWSDATA_API_KEY = "pub_824d888f4b7f43a6972d48b4a04ad446";
-
-interface NewsDataResult {
-  article_id: string;
-  title: string;
-  description: string | null;
-  link: string;
-  image_url: string | null;
-  pubDate: string;
-  source_name: string;
-  source_url: string;
-  category: string[];
-  keywords: string[] | null;
-}
-
-// Termos que confirmam que o artigo é realmente sobre tecnologia
-const TECH_TERMS = [
-  "tecnologia",
-  "technology",
-  "software",
-  "hardware",
-  "app",
-  "aplicativo",
-  "inteligência artificial",
-  "ia",
-  "ai",
-  "machine learning",
-  "deep learning",
-  "programação",
-  "programming",
-  "developer",
-  "desenvolvedor",
-  "código",
-  "code",
-  "startup",
-  "fintech",
-  "blockchain",
-  "crypto",
-  "criptomoeda",
-  "bitcoin",
-  "smartphone",
-  "iphone",
-  "android",
-  "samsung",
-  "apple",
-  "google",
-  "microsoft",
-  "meta",
-  "openai",
-  "chatgpt",
-  "gpt",
-  "llm",
-  "nvidia",
-  "chip",
-  "processador",
-  "computador",
-  "pc",
-  "notebook",
-  "tablet",
-  "gadget",
-  "wearable",
-  "internet",
-  "rede",
-  "5g",
-  "cloud",
-  "nuvem",
-  "servidor",
-  "server",
-  "dados",
-  "data",
-  "cibersegurança",
-  "cybersecurity",
-  "hacker",
-  "segurança digital",
-  "robô",
-  "robot",
-  "automação",
-  "automation",
-  "iot",
-  "api",
-  "web",
-  "linux",
-  "windows",
-  "python",
-  "javascript",
-  "react",
-  "angular",
-  ".net",
-  "github",
-  "gitlab",
-  "aws",
-  "azure",
-  "docker",
-  "kubernetes",
-  "realidade virtual",
-  "vr",
-  "ar",
-  "realidade aumentada",
-  "metaverso",
-  "digital",
-  "tech",
-  "inovação",
-  "innovation",
-  "algoritmo",
-  "algorithm",
-  "banco de dados",
-  "database",
-  "tesla",
-  "spacex",
-  "elon musk",
-  "semiconductor",
-  "semicondutor",
-  "pixel",
-  "gaming",
-  "game",
-];
-
-const isTechRelated = (article: NewsDataResult): boolean => {
-  const text =
-    `${article.title} ${article.description || ""} ${(article.keywords || []).join(" ")}`.toLowerCase();
-  return TECH_TERMS.some((term) => text.includes(term));
-};
+// ─── Fetch via Vercel Serverless (sem CORS, API keys seguras no server) ─
+const NEWSDATA_API_KEY = "pub_824d888f4b7f43a6972d48b4a04ad446"; // fallback dev only
 
 const fetchNews = async (
   lang: string,
   cursor?: string,
 ): Promise<NewsResponse> => {
-  const apiLang = lang.startsWith("pt") ? "pt" : "en";
+  // Tenta a serverless function (produção no Vercel)
+  try {
+    const url = new URL("/api/tech-news-multi", window.location.origin);
+    url.searchParams.set("lang", lang);
+    if (cursor) url.searchParams.set("cursor", cursor);
 
+    const res = await fetch(url.toString());
+    if (res.ok) {
+      const data = await res.json();
+      return {
+        totalArticles: data.totalArticles ?? 0,
+        articles: data.articles ?? [],
+        nextPage: data.nextPage ?? null,
+      };
+    }
+  } catch {
+    // serverless não disponível (dev local), usa fallback abaixo
+  }
+
+  // Fallback: chamada direta ao newsdata.io (dev local)
+  const apiLang = lang.startsWith("pt") ? "pt" : "en";
   const url = new URL("https://newsdata.io/api/1/latest");
   url.searchParams.set("apikey", NEWSDATA_API_KEY);
   url.searchParams.set("category", "technology");
   url.searchParams.set("language", apiLang);
   url.searchParams.set("size", "10");
-  url.searchParams.set(
-    "q",
-    apiLang === "pt"
-      ? "tecnologia OR software OR inteligência artificial OR startup"
-      : "technology OR software OR AI OR programming OR startup",
-  );
   if (cursor) url.searchParams.set("page", cursor);
 
   let res = await fetch(url.toString());
-
   if (!res.ok && apiLang === "pt") {
     url.searchParams.set("language", "en");
-    url.searchParams.set(
-      "q",
-      "technology OR software OR AI OR programming OR startup",
-    );
     res = await fetch(url.toString());
   }
-
   if (!res.ok) throw new Error("Erro ao buscar notícias");
 
   const data = await res.json();
-  const results: NewsDataResult[] = data.results || [];
-  const techArticles = results.filter((a) => a.title && isTechRelated(a));
+  const articles = (data.results || [])
+    .filter((a: { title: string }) => a.title)
+    .map(
+      (a: {
+        title: string;
+        description: string | null;
+        link: string;
+        image_url: string | null;
+        pubDate: string;
+        source_name: string;
+        source_url: string;
+      }) => ({
+        title: a.title,
+        description: a.description || "",
+        url: a.link,
+        image: a.image_url || null,
+        publishedAt: a.pubDate,
+        source: { name: a.source_name || "News", url: a.source_url || "" },
+      }),
+    );
 
   return {
-    totalArticles: techArticles.length,
+    totalArticles: articles.length,
+    articles,
     nextPage: data.nextPage ?? null,
-    articles: techArticles.map((a) => ({
-      title: a.title,
-      description: a.description || "",
-      url: a.link,
-      image: a.image_url || null,
-      publishedAt: a.pubDate,
-      source: {
-        name: a.source_name || "News",
-        url: a.source_url || "",
-      },
-    })),
   };
 };
 
@@ -264,13 +159,13 @@ const NewsCard = ({
     href={article.url}
     target="_blank"
     rel="noopener noreferrer"
-    className={`group relative flex flex-col rounded-2xl bg-card border border-border overflow-hidden transition-all duration-300 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 ${
-      featured ? "md:col-span-2 md:row-span-2" : ""
-    }`}
+    className={`group relative flex ${
+      featured ? "flex-col md:flex-row" : "flex-col"
+    } rounded-2xl bg-card border border-border overflow-hidden transition-all duration-300 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1`}
   >
     {/* Imagem */}
     <div
-      className={`relative overflow-hidden ${featured ? "h-64 md:h-80" : "h-44"}`}
+      className={`relative overflow-hidden ${featured ? "h-64 md:h-auto md:w-1/2" : "h-44"}`}
     >
       <img
         src={article.image || PLACEHOLDER_IMG}
@@ -349,10 +244,13 @@ const News = () => {
     }
   }, [data]);
 
-  const handleRefresh = useCallback(() => {
-    setAllArticles([]);
+  const handleRefresh = useCallback(async () => {
     setNextCursor(null);
-    refetch();
+    const result = await refetch();
+    if (result.data) {
+      setAllArticles(result.data.articles);
+      setNextCursor(result.data.nextPage);
+    }
   }, [refetch]);
 
   const handleLoadMore = useCallback(async () => {
@@ -458,16 +356,27 @@ const News = () => {
 
         {/* Notícias */}
         {!isLoading && !isError && articles.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featured && <NewsCard article={featured} featured lang={lang} />}
-            {rest.map((article, i) => (
-              <NewsCard
-                key={`${article.url}-${i}`}
-                article={article}
-                lang={lang}
-              />
-            ))}
-          </div>
+          <>
+            {/* Featured article */}
+            {featured && (
+              <div className="mb-8">
+                <NewsCard article={featured} featured lang={lang} />
+              </div>
+            )}
+
+            {/* Grid de notícias */}
+            {rest.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {rest.map((article, i) => (
+                  <NewsCard
+                    key={`${article.url}-${i}`}
+                    article={article}
+                    lang={lang}
+                  />
+                ))}
+              </div>
+            )}
+          </>
         )}
 
         {/* Carregar mais */}
