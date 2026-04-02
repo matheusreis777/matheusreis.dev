@@ -60,7 +60,7 @@ export const NewsShareStory = ({ article, lang }: NewsShareStoryProps) => {
         width: 1080,
         height: 1920,
         pixelRatio: 1,
-        cacheBust: true,
+        cacheBust: false,
       });
       const res = await fetch(dataUrl);
       return await res.blob();

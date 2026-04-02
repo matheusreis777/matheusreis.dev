@@ -3,9 +3,13 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useTranslation, Trans } from "react-i18next";
+import { useInView } from "@/hooks/use-in-view";
 
 const AboutSection = () => {
   const { t } = useTranslation();
+  const { ref: headerRef, isInView: headerVisible } = useInView();
+  const { ref: topGridRef, isInView: topGridVisible } = useInView();
+  const { ref: bottomRef, isInView: bottomVisible } = useInView();
 
   const documents = [
     {
@@ -27,7 +31,10 @@ const AboutSection = () => {
   return (
     <section id="sobre" className="min-h-screen flex items-center section-glow py-24 mb-12">
       <div className="container mx-auto px-6 md:px-12 lg:px-24 relative z-10">
-        <div className="mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div
+          ref={headerRef}
+          className={`mb-12 transition-opacity duration-700 ${headerVisible ? "animate-fade-up" : "opacity-0"}`}
+        >
           <h2 className="font-heading text-3xl md:text-4xl font-medium text-foreground flex items-center gap-3">
             <User className="text-primary" size={32} />
             {t("about.title")}
@@ -36,9 +43,9 @@ const AboutSection = () => {
         </div>
 
         {/* Top Grid: Profile + Highlights side-by-side with Bio */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <div ref={topGridRef} className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           {/* Sidebar Area (Left) */}
-          <div className="lg:col-span-4 flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
+          <div className={`lg:col-span-4 flex flex-col gap-6 transition-opacity duration-700 ${topGridVisible ? "animate-slide-in-left stagger-1" : "opacity-0"}`}>
             {/* Perfil Compacto */}
             <div className="bg-card/20 border border-border/40 rounded-3xl p-6 backdrop-blur-sm shadow-sm flex flex-col items-center text-center">
               <Dialog>
@@ -106,7 +113,7 @@ const AboutSection = () => {
           </div>
 
           {/* Bio Content Area (Right) */}
-          <div className="lg:col-span-8 flex flex-col animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+          <div className={`lg:col-span-8 flex flex-col transition-opacity duration-700 ${topGridVisible ? "animate-slide-in-right stagger-2" : "opacity-0"}`}>
             <div className="bg-card/20 border border-border/40 rounded-3xl p-8 lg:p-10 h-full backdrop-blur-sm transition-all hover:bg-card/30">
               <div className="prose prose-invert max-w-none text-justify">
                 <p className="text-foreground text-lg leading-relaxed font-body mb-6">
@@ -135,7 +142,10 @@ const AboutSection = () => {
         </div>
 
         {/* Bottom Section: Curriculum & Documents */}
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
+        <div
+          ref={bottomRef}
+          className={`mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 transition-opacity duration-700 ${bottomVisible ? "animate-fade-up" : "opacity-0"}`}
+        >
           
           {/* Currículo Card */}
           <div className="lg:col-span-4 bg-card/20 border border-border/40 rounded-3xl p-8 backdrop-blur-sm shadow-sm transition-all hover:bg-card/30 flex flex-col items-center justify-center text-center">

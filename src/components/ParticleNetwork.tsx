@@ -19,9 +19,12 @@ const ParticleNetwork = () => {
 
     let animationId: number;
     let particles: Particle[] = [];
-    const PARTICLE_COUNT = 80;
-    const CONNECTION_DIST = 150;
+    const PARTICLE_COUNT = 60; // reduzido de 80 para melhor performance
+    const CONNECTION_DIST_SQ = 150 * 150; // distância² para evitar Math.sqrt
     const PARTICLE_SPEED = 0.3;
+    const TARGET_FPS = 30;
+    const FRAME_INTERVAL = 1000 / TARGET_FPS;
+    let lastFrameTime = 0;
 
     const resize = () => {
       canvas.width = canvas.offsetWidth * window.devicePixelRatio;
@@ -43,13 +46,25 @@ const ParticleNetwork = () => {
       }
     };
 
+    let resizeTimer: ReturnType<typeof setTimeout>;
     const handleResize = () => {
-      resize();
-      initParticles();
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        resize();
+        initParticles();
+      }, 200);
     };
 
-    const draw = () => {
+    const draw = (timestamp: number) => {
       if (!isVisible) return;
+
+      // Frame rate cap a 30fps
+      const delta = timestamp - lastFrameTime;
+      if (delta < FRAME_INTERVAL) {
+        animationId = requestAnimationFrame(draw);
+        return;
+      }
+      lastFrameTime = timestamp - (delta % FRAME_INTERVAL);
 
       const w = canvas.offsetWidth;
       const h = canvas.offsetHeight;
@@ -63,16 +78,16 @@ const ParticleNetwork = () => {
         if (p.y < 0 || p.y > h) p.vy *= -1;
       }
 
-      // Draw connections
+      // Draw connections — usando distância² para evitar Math.sqrt
+      ctx.lineWidth = 0.5;
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < CONNECTION_DIST) {
-            const alpha = (1 - dist / CONNECTION_DIST) * 0.15;
+          const distSq = dx * dx + dy * dy;
+          if (distSq < CONNECTION_DIST_SQ) {
+            const alpha = (1 - distSq / CONNECTION_DIST_SQ) * 0.15;
             ctx.strokeStyle = `rgba(34, 197, 94, ${alpha})`;
-            ctx.lineWidth = 0.5;
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
@@ -82,8 +97,8 @@ const ParticleNetwork = () => {
       }
 
       // Draw particles
+      ctx.fillStyle = "rgba(34, 197, 94, 0.4)";
       for (const p of particles) {
-        ctx.fillStyle = "rgba(34, 197, 94, 0.4)";
         ctx.beginPath();
         ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
         ctx.fill();
@@ -100,9 +115,9 @@ const ParticleNetwork = () => {
       (entries) => {
         isVisible = entries[0].isIntersecting;
         if (isVisible) {
-          // Restart animation if it was paused
           cancelAnimationFrame(animationId);
-          draw();
+          lastFrameTime = 0;
+          animationId = requestAnimationFrame(draw);
         }
       },
       { threshold: 0 }
@@ -113,6 +128,7 @@ const ParticleNetwork = () => {
 
     return () => {
       cancelAnimationFrame(animationId);
+      clearTimeout(resizeTimer);
       window.removeEventListener("resize", handleResize);
       observer.disconnect();
     };

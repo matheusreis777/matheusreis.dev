@@ -18,8 +18,8 @@ const HeroSection = () => {
     try {
       const { width, height } = storyRef.current.getBoundingClientRect();
       const dataUrl = await toPng(storyRef.current, {
-        pixelRatio: 3,
-        cacheBust: true,
+        pixelRatio: 2,
+        cacheBust: false,
         backgroundColor: "#09090b",
         width,
         height,
@@ -107,20 +107,20 @@ const HeroSection = () => {
       <ParticleNetwork />
       <div className="container mx-auto px-6 md:px-12 lg:px-24 relative z-10">
         <div className="max-w-3xl">
-          <p className="text-muted-foreground text-sm tracking-[0.3em] uppercase mb-6 font-body">
+          <p className="text-muted-foreground text-sm tracking-[0.3em] uppercase mb-6 font-body animate-fade-down">
             {t("hero.role")}
           </p>
-          <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-medium text-foreground leading-tight mb-6">
+          <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-medium text-foreground leading-tight mb-6 animate-fade-up stagger-1">
             {t("hero.title_first")}
             <br />
             <span className="text-primary">{t("hero.title_last")}</span>
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground font-body leading-relaxed mb-4 max-w-2xl text-justify">
+          <p className="text-lg md:text-xl text-muted-foreground font-body leading-relaxed mb-4 max-w-2xl text-justify animate-fade-up stagger-2">
             <Trans i18nKey="hero.description_1">
               Desenvolvedor Fullstack com especialização em backend utilizando <span className="text-foreground">.NET</span> e a linguagem <span className="text-foreground">C#</span>, com sólida experiência no desenvolvimento de <span className="text-foreground">APIs REST</span> escaláveis, integrações entre sistemas e aplicações corporativas.
             </Trans>
           </p>
-          <p className="text-base text-muted-foreground font-body leading-relaxed mb-8 max-w-2xl text-justify">
+          <p className="text-base text-muted-foreground font-body leading-relaxed mb-8 max-w-2xl text-justify animate-fade-up stagger-3">
             <Trans i18nKey="hero.description_2">
               Atuo na construção de soluções completas, desde a modelagem e otimização de banco de dados até o desenvolvimento de interfaces modernas com <span className="text-foreground">Angular</span>, <span className="text-foreground">JavaScript</span> e aplicações mobile com <span className="text-foreground">React Native</span>, sempre com foco em performance, escalabilidade e qualidade de código.
             </Trans>

@@ -1,8 +1,11 @@
 import { CheckCircle2, Briefcase } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useInView } from "@/hooks/use-in-view";
 
 const ExperienceSection = () => {
   const { t } = useTranslation();
+  const { ref: headerRef, isInView: headerVisible } = useInView();
+  const { ref: gridRef, isInView: gridVisible } = useInView();
 
   const specialties = [
     {
@@ -45,7 +48,10 @@ const ExperienceSection = () => {
   return (
     <section id="experiencia" className="min-h-screen flex items-center section-glow py-24 mb-12">
       <div className="container mx-auto px-6 md:px-12 lg:px-24 relative z-10">
-        <div className="mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div
+          ref={headerRef}
+          className={`mb-16 transition-opacity duration-700 ${headerVisible ? "animate-fade-up" : "opacity-0"}`}
+        >
           <h2 className="font-heading text-3xl md:text-4xl font-medium text-foreground flex items-center gap-3">
             <Briefcase className="text-primary" size={32} />
             {t("exp.title")}
@@ -56,14 +62,14 @@ const ExperienceSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {specialties.map((specialty, index) => {
-            const delayClass = `delay-[${(index + 1) * 100}ms]`;
+            const delayClass = `stagger-${index + 1}`;
 
             return (
               <div 
                 key={specialty.category} 
-                className={`bg-card/20 border border-border/40 rounded-2xl p-8 backdrop-blur-sm transition-all duration-300 hover:bg-card/40 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] animate-in fade-in slide-in-from-bottom-8 duration-700 ${delayClass}`}
+                className={`bg-card/20 border border-border/40 rounded-2xl p-8 backdrop-blur-sm transition-colors duration-300 hover:bg-card/40 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] ${gridVisible ? `animate-fade-up ${delayClass}` : "opacity-0"}`}
               >
                 <h3 className="font-heading text-xl font-semibold text-foreground mb-6 uppercase tracking-wider flex items-center gap-3">
                   <div className="w-2 h-6 bg-primary rounded-full"></div>

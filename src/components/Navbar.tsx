@@ -85,6 +85,8 @@ const Navbar = () => {
           <button
             onClick={() => setOpen(!open)}
             className="text-foreground p-1"
+            aria-expanded={open}
+            aria-label={open ? "Fechar menu" : "Abrir menu"}
           >
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -92,8 +94,12 @@ const Navbar = () => {
       </div>
 
       {/* Mobile menu */}
-      {open && (
-        <div className="md:hidden border-t border-border bg-background px-6 py-4 space-y-4 animate-in slide-in-from-top-4">
+      <div
+        className={`md:hidden border-t border-border bg-background/95 backdrop-blur-sm px-6 overflow-hidden transition-all duration-300 ease-out ${
+          open ? "max-h-96 py-4 opacity-100" : "max-h-0 py-0 opacity-0"
+        }`}
+      >
+        <div className="space-y-4">
           {links.map((l) =>
             l.isRoute ? (
               <Link
@@ -116,7 +122,7 @@ const Navbar = () => {
             ),
           )}
         </div>
-      )}
+      </div>
     </nav>
   );
 };

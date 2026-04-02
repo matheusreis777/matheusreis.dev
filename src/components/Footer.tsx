@@ -1,12 +1,14 @@
 import { BookOpen } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useInView } from "@/hooks/use-in-view";
 
 const Footer = () => {
   const { t } = useTranslation();
+  const { ref, isInView } = useInView({ threshold: 0.3 });
 
   return (
-    <footer className="border-t border-border py-12">
-      <div className="container mx-auto px-6 md:px-12 lg:px-24 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+    <footer ref={ref} className="border-t border-border py-12">
+      <div className={`container mx-auto px-6 md:px-12 lg:px-24 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left transition-opacity duration-700 ${isInView ? "animate-fade-up" : "opacity-0"}`}>
         <div>
           <p className="font-heading text-sm font-medium text-foreground">{t("footer.name")}</p>
           <p className="font-body text-xs text-muted-foreground">{t("footer.role")}</p>

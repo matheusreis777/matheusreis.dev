@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -149,7 +149,7 @@ const SkeletonCard = ({ featured = false }: { featured?: boolean }) => (
 );
 
 // ─── News Card ───────────────────────────────────────────────
-const NewsCard = ({
+const NewsCard = React.memo(({
   article,
   featured = false,
   lang,
@@ -221,7 +221,7 @@ const NewsCard = ({
       </div>
     </div>
   </a>
-);
+), (prev, next) => prev.article.url === next.article.url && prev.featured === next.featured && prev.lang === next.lang);
 
 // ─── Page ────────────────────────────────────────────────────
 const News = () => {
