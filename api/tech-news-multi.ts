@@ -177,39 +177,59 @@ function deduplicateArticles(articles: Article[]): Article[] {
 
 // ─── Tradução (Google Translate free endpoint) ───────────────
 const TRANSLATE_SEPARATOR = " ||| ";
+const MAX_TRANSLATE_LENGTH = 4500; // Limite seguro para URL do Google Translate
 
-async function translateBatch(texts: string[], targetLang: string): Promise<string[]> {
+async function translateTexts(texts: string[], targetLang: string): Promise<string[]> {
     if (texts.length === 0) return [];
 
-    // Junta tudo com separador para traduzir numa única chamada
-    const joined = texts.join(TRANSLATE_SEPARATOR);
+    // Divide em chunks que caibam no limite de caracteres
+    const chunks: string[][] = [];
+    let currentChunk: string[] = [];
+    let currentLen = 0;
 
-    try {
-        const url = new URL("https://translate.googleapis.com/translate_a/single");
-        url.searchParams.set("client", "gtx");
-        url.searchParams.set("sl", "auto");
-        url.searchParams.set("tl", targetLang);
-        url.searchParams.set("dt", "t");
-        url.searchParams.set("q", joined);
-
-        const res = await fetch(url.toString());
-        if (!res.ok) return texts; // fallback: retorna originais
-
-        const data = await res.json();
-        // Resposta: [[["texto traduzido","texto original",null,null,10],...],null,"en",...]
-        const translated = (data[0] as Array<[string]>)
-            .map((segment: [string]) => segment[0])
-            .join("");
-
-        const parts = translated.split(/\s*\|\|\|\s*/);
-
-        // Se a quantidade de partes bater, retorna; senão fallback
-        if (parts.length === texts.length) return parts;
-
-        return texts; // fallback seguro
-    } catch {
-        return texts; // fallback: retorna originais
+    for (const text of texts) {
+        const textLen = text.length + TRANSLATE_SEPARATOR.length;
+        if (currentLen + textLen > MAX_TRANSLATE_LENGTH && currentChunk.length > 0) {
+            chunks.push(currentChunk);
+            currentChunk = [];
+            currentLen = 0;
+        }
+        currentChunk.push(text);
+        currentLen += textLen;
     }
+    if (currentChunk.length > 0) chunks.push(currentChunk);
+
+    // Traduz cada chunk em paralelo
+    const translatedChunks = await Promise.all(
+        chunks.map(async (chunk) => {
+            const joined = chunk.join(TRANSLATE_SEPARATOR);
+            try {
+                const url = new URL("https://translate.googleapis.com/translate_a/single");
+                url.searchParams.set("client", "gtx");
+                url.searchParams.set("sl", "auto");
+                url.searchParams.set("tl", targetLang);
+                url.searchParams.set("dt", "t");
+                url.searchParams.set("q", joined);
+
+                const res = await fetch(url.toString());
+                if (!res.ok) return chunk;
+
+                const data = await res.json();
+                const translated = (data[0] as Array<[string]>)
+                    .map((segment: [string]) => segment[0])
+                    .join("");
+
+                const parts = translated.split(/\s*\|\|\|\s*/);
+                if (parts.length === chunk.length) return parts;
+
+                return chunk; // fallback
+            } catch {
+                return chunk;
+            }
+        }),
+    );
+
+    return translatedChunks.flat();
 }
 
 async function translateArticles(articles: Article[], targetLang: string): Promise<Article[]> {
@@ -219,8 +239,8 @@ async function translateArticles(articles: Article[], targetLang: string): Promi
     const descriptions = articles.map((a) => a.description || "");
 
     const [translatedTitles, translatedDescs] = await Promise.all([
-        translateBatch(titles, targetLang),
-        translateBatch(descriptions, targetLang),
+        translateTexts(titles, targetLang),
+        translateTexts(descriptions, targetLang),
     ]);
 
     return articles.map((a, i) => ({
