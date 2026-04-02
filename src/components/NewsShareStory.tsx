@@ -27,7 +27,9 @@ const truncate = (text: string, maxLength: number) => {
 };
 
 const formatStoryDate = (dateStr: string, lang: string) => {
+  if (!dateStr) return lang.startsWith("pt") ? "Agora" : "Now";
   const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return lang.startsWith("pt") ? "Agora" : "Now";
   return date.toLocaleDateString(lang.startsWith("pt") ? "pt-BR" : "en-US", {
     day: "numeric",
     month: "long",
@@ -37,8 +39,8 @@ const formatStoryDate = (dateStr: string, lang: string) => {
 
 const CTA_LINE1 = "Fique por dentro do mundo tech";
 const CTA_LINE1_EN = "Stay up to date with tech";
-const CTA_LINE2 = "Notícias atualizadas em tempo real, curadas para devs.";
-const CTA_LINE2_EN = "Real-time news, curated for devs.";
+const CTA_LINE2 = "Notícias atualizadas em tempo real.";
+const CTA_LINE2_EN = "Real-time news.";
 
 export const NewsShareStory = ({ article, lang }: NewsShareStoryProps) => {
   const { t } = useTranslation();
@@ -536,6 +538,23 @@ const StoryTemplate = ({
             {truncate(article.description, 220)}
           </div>
         )}
+
+        {/* Fonte */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            marginTop: 28,
+          }}
+        >
+          <span style={{ fontSize: 18, color: "#52525b", fontWeight: 500 }}>
+            {lang.startsWith("pt") ? "Fonte:" : "Source:"}
+          </span>
+          <span style={{ fontSize: 18, color: "#22c55e", fontWeight: 600 }}>
+            {article.source.name}
+          </span>
+        </div>
       </div>
     </div>
 

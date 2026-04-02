@@ -103,7 +103,10 @@ const fetchNews = async (
 };
 
 const formatDate = (dateStr: string, lang: string) => {
+  if (!dateStr) return lang.startsWith("pt") ? "Agora há pouco" : "Just now";
   const date = new Date(dateStr);
+  if (isNaN(date.getTime()))
+    return lang.startsWith("pt") ? "Agora há pouco" : "Just now";
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
